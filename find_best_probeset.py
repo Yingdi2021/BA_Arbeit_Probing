@@ -79,32 +79,46 @@ def myUtility(input, l, k, S):
 # calculate utility for all possible probe-sets (of size k)
 # returns the optimal probe-set(s) and the corresponding utility score.
 # set the last parameter (logOn) to true if you want a detailed output of what happened.
-def computeUforAllPossibleS(input, l, k, logOn):
+def computeUforAllPossibleS(input, l, k, s, logOn):
     n = len(input)
     maxU = 0
+    secondBestU = 0
     maxSets = set()
+    counter = 0
     for probe_set in findsubsets(set(range(n)), k):
         if logOn==False:
             sys.stdout = open(os.devnull, 'w')
         print("*****************************************************************")
         print("S=", probe_set)
+        counter += 1
         u = myUtility(input, l, k, set(probe_set))
         if logOn == False:
             sys.stdout = sys.__stdout__
-        if u > maxU:
+        if counter == 1:
+            secondBestU = u
             maxU = u
             maxSets = set()
             maxSets.add(probe_set)
-        elif u == maxU:
-            maxSets.add(probe_set)
+        else:
+            if u > maxU:
+                secondBestU = maxU
+                maxU = u
+                maxSets = set()
+                maxSets.add(probe_set)
+            elif u == maxU:
+                maxSets.add(probe_set)
         print("when probe-set=",set(probe_set),",u=",u)
 
     print("*****************************************************************")
     print("Utility is maximum (", maxU,") when probeset is (one of) the following: ")
     for bestSet in maxSets:
         print(bestSet, "corresponding prob:", input[list(bestSet)])
+    abstand = maxU-secondBestU
+    signif = abstand > s
+    print("secondBestU:", secondBestU, "diff=", maxU-secondBestU,
+          "significant diff?: ", signif)
 
-    return maxSets, maxU
+    return maxSets, maxU, secondBestU
 
 ############################# Example #################################
 input = np.array( [0.081, 0.745, 0.954, 0.954])
@@ -112,4 +126,5 @@ n = len(input)
 l = 3
 k = 2
 detailedLogging = False
-maxSets, maxU = computeUforAllPossibleS(input, l, k, detailedLogging)
+sifnificance_level = 0.000000000001
+maxSets, maxU, secondBestU= computeUforAllPossibleS(input, l, k, sifnificance_level, detailedLogging)
