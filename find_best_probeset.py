@@ -79,20 +79,20 @@ def myUtility(input, l, k, S):
 # calculate utility for all possible probe-sets (of size k)
 # returns the optimal probe-set(s) and the corresponding utility score.
 # set the last parameter (logOn) to true if you want a detailed output of what happened.
-def computeUforAllPossibleS(input, l, k, s, logOn):
+def computeUforAllPossibleS(input, l, k, s, loggingLevel):
     n = len(input)
     maxU = 0
     secondBestU = 0
     maxSets = set()
     counter = 0
     for probe_set in findsubsets(set(range(n)), k):
-        if logOn==False:
+        if loggingLevel <= 1:
             sys.stdout = open(os.devnull, 'w')
         print("*****************************************************************")
         print("S=", probe_set)
         counter += 1
         u = myUtility(input, l, k, set(probe_set))
-        if logOn == False:
+        if loggingLevel == 1:
             sys.stdout = sys.__stdout__
         if counter == 1:
             secondBestU = u
@@ -117,6 +117,8 @@ def computeUforAllPossibleS(input, l, k, s, logOn):
     signif = abstand > s
     print("secondBestU:", secondBestU, "diff=", maxU-secondBestU,
           "significant diff?: ", signif)
+    if loggingLevel == 0:
+        sys.stdout = sys.__stdout__
 
     return maxSets, maxU, secondBestU
 
@@ -125,6 +127,6 @@ input = np.array( [0.081, 0.745, 0.954, 0.954])
 n = len(input)
 l = 3
 k = 2
-detailedLogging = False
+loggingLevel = 0 # 0 for no logging at all # 1 for end-result, # 2 for detailed
 sifnificance_level = 0.000000000001
-maxSets, maxU, secondBestU= computeUforAllPossibleS(input, l, k, sifnificance_level, detailedLogging)
+maxSets, maxU, secondBestU= computeUforAllPossibleS(input, l, k, sifnificance_level, loggingLevel)
