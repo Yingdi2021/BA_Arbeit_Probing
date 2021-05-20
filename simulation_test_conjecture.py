@@ -22,6 +22,8 @@ def checkIfConsecutive(set):
 ################################################################
 
 ####################### Simulation #############################
+sifnificance_level = pow(10, -8)
+
 for n in range(4, 11):
     for l in range(4,n+1):
         for k in range(2, n+1):
@@ -32,11 +34,12 @@ for n in range(4, 11):
                 violate = False
 
                 # find optimal probe-set(s) for this random input. surpress output
-                significant, maxU, maxSets = computeUforAllPossibleS(inputData, n, l, k, 0)
+                maxSets, maxU, secondBestU, significant = computeUforAllPossibleS(inputData, l, k, sifnificance_level, 0)
 
                 # check if the optimal probe-set(s) violates our conjecture
                 if significant == True: # of course only when it's significant
                     for maxSet in maxSets:
+                        # print(maxSet)
                         if not checkIfConsecutiveRepeatingValueSafe(maxSet, inputData):
                             violate = True
                             print("n=", n, ",l=",l, ",k=", k,"violation!", maxSet, np.array(inputData)[list(maxSet)], "inputData：", inputData)

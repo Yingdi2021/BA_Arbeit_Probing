@@ -120,7 +120,7 @@ def computeUforAllPossibleS(input, l, k, s, loggingLevel):
     if loggingLevel == 0:
         sys.stdout = sys.__stdout__
 
-    return maxSets, maxU, secondBestU
+    return maxSets, maxU, secondBestU, signif
 
 ############################# Example #################################
 input = np.array( [0.081, 0.745, 0.954, 0.954])
@@ -128,5 +128,5 @@ n = len(input)
 l = 3
 k = 2
 loggingLevel = 0 # 0 for no logging at all # 1 for end-result, # 2 for detailed
-sifnificance_level = 0.000000000001
-maxSets, maxU, secondBestU= computeUforAllPossibleS(input, l, k, sifnificance_level, loggingLevel)
+sifnificance_level = pow(10, -8)
+maxSets, maxU, secondBestU, signif= computeUforAllPossibleS(input, l, k, sifnificance_level, loggingLevel)
