@@ -22,7 +22,7 @@ def findsubsets(set, subset_size):
 # calculates the utility (probability of making the right decision)
 # given input data, l(threshold), k(probe-set size) and S(the probe-set)
 # for the normal case, ie. acceptance criteria is: number of 1s >= l.
-def myUtility(input, l, k, S):
+def myUtilityForThresholdCases(input, l, k, S):
 
     n = len(input)
     N = set(range(n))
@@ -75,6 +75,57 @@ def myUtility(input, l, k, S):
     print("utiliiy=", utility, "when we select the probe-set:", S)
     return utility
 
+# calculates the utility (probability of making the right decision)
+# given input data, m (how many 1s EXACTLY), k(probe-set size) and S(the probe-set)
+# for the xy case, ie. acceptance criteria is: number of 1s == m
+def myUtilityForXyCases(input, m, k, S):
+
+    n = len(input)
+    N = set(range(n))
+    R = N - S
+
+    utility = 0
+
+    # if there are no more than m 1s in the probe-set:
+    for d in range(m + 1):
+        print("*********************")
+        print("Calculating probability of having excatly",d,"Eins in the probe-set")
+        subsets_for_this_d = findsubsets(S, d)
+        print("there are in total", len(subsets_for_this_d), "subsets: ", subsets_for_this_d, "for d=", d)
+        ps = 0
+        for subset in subsets_for_this_d:
+            remaining_nulls = S - set(subset)
+            p_subset = multiplyPand1MinusP(input, set(subset), remaining_nulls)
+            print("subset:",set(subset), "R=", remaining_nulls, "p=",p_subset)
+            ps += p_subset
+        print("probability, that there are exactly", d, "Eins in probe-set is:",ps)
+
+        r = m - d
+        print("---------------")
+        print("Calculating C (Prob that there are excatly", r, "1s in R) for d=", d)
+
+        c = 0
+        if r <= n-k:
+            subsets_for_this_m = findsubsets(R, r)
+            for subset in subsets_for_this_m:
+                remaining_nulls = R - set(subset)
+                p_subset = multiplyPand1MinusP(input, set(subset), remaining_nulls)
+                c += p_subset
+        print("probability, that exactly", r, "Eins in Rest-Set is:", c)
+        print("choose the more likely! \nWhen there are",d,"Eins in probe-set: ")
+        if c>= 0.5:
+            print("it's more likely (p= ",c, ") that this is a good candidate")
+            print("--> probability, that d=",d,"AND we make the right decision is",ps*c)
+            utility += ps*c
+        else:
+            print("it's more likely (p= ",(1-c), ") that this is a bad candidate")
+            print("--> probability, that d=",d,"AND we make the right decision is",ps*(1-c))
+            utility += ps*(1-c)
+
+    print("-------------\nResult:")
+    print("utiliiy=", utility, "when we select the probe-set:", S)
+    return utility
+
 # given an input (a vector of n probabilities/the groundset), parameters l, k
 # calculate utility for all possible probe-sets (of size k)
 # returns the optimal probe-set(s) and the corresponding utility score.
@@ -91,7 +142,7 @@ def computeUforAllPossibleS(input, l, k, s, loggingLevel):
         print("*****************************************************************")
         print("S=", probe_set)
         counter += 1
-        u = myUtility(input, l, k, set(probe_set))
+        u = myUtilityForThresholdCases(input, l, k, set(probe_set))
         if loggingLevel == 1:
             sys.stdout = sys.__stdout__
         if counter == 1:
