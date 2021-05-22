@@ -1,5 +1,5 @@
 import numpy as np
-from find_best_probeset import computeUforAllPossibleS
+from find_best_probeset import computeUforAllPossibleS_threshold_case
 
 #################### Helper-functions #########################
 # check if a given sub-set is consecutive. e.g. 234, 123, 3456, etc
@@ -34,7 +34,7 @@ for n in range(4, 11):
                 violate = False
 
                 # find optimal probe-set(s) for this random input. surpress output
-                maxSets, maxU, secondBestU, significant = computeUforAllPossibleS(inputData, l, k, sifnificance_level, 0)
+                maxSets, maxU, secondBestU, significant = computeUforAllPossibleS_threshold_case(inputData, l, k, sifnificance_level, 0)
 
                 # check if the optimal probe-set(s) violates our conjecture
                 if significant == True: # of course only when it's significant

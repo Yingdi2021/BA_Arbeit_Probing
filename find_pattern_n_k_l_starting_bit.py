@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-from find_best_probeset import computeUforAllPossibleS
+from find_best_probeset import computeUforAllPossibleS_threshold_case
 import statistics
 
 sifnificance_level = pow(10, -8)
@@ -22,7 +22,7 @@ for n in range(n, n + 1):
                 inputData = sorted(np.random.rand(n))
                 inputData = np.round(inputData, 3)
                 violate = False
-                maxSets, maxU, secondBestU, signif = computeUforAllPossibleS(
+                maxSets, maxU, secondBestU, signif = computeUforAllPossibleS_threshold_case(
                     inputData, l, k, sifnificance_level, 0)
                 if signif == True:
                     meaningful += 1

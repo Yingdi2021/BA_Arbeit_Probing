@@ -77,8 +77,8 @@ def myUtilityForThresholdCases(input, l, k, S):
 
 # calculates the utility (probability of making the right decision)
 # given input data, m (how many 1s EXACTLY), k(probe-set size) and S(the probe-set)
-# for the xy case, ie. acceptance criteria is: number of 1s == m
-def myUtilityForXyCases(input, m, k, S):
+# for the exactX case, ie. acceptance criteria is: number of 1s == m
+def myUtilityForExactXCases(input, m, k, S):
 
     n = len(input)
     N = set(range(n))
@@ -130,7 +130,7 @@ def myUtilityForXyCases(input, m, k, S):
 # calculate utility for all possible probe-sets (of size k)
 # returns the optimal probe-set(s) and the corresponding utility score.
 # set the last parameter (logOn) to true if you want a detailed output of what happened.
-def computeUforAllPossibleS(input, l, k, s, loggingLevel):
+def computeUforAllPossibleS_threshold_case(input, l, k, s, loggingLevel):
     n = len(input)
     maxU = 0
     secondBestU = 0
@@ -173,6 +173,51 @@ def computeUforAllPossibleS(input, l, k, s, loggingLevel):
 
     return maxSets, maxU, secondBestU, signif
 
+# same function as above, but for the exactX case. Duplicated Code, yes. But for the sake of computing speed,
+# I don't want to introduce yet another if condition (which will be repeatedly assessed)
+def computeUforAllPossibleS_ExactX_case(input, l, k, s, loggingLevel):
+    n = len(input)
+    maxU = 0
+    secondBestU = 0
+    maxSets = set()
+    counter = 0
+    for probe_set in findsubsets(set(range(n)), k):
+        if loggingLevel <= 1:
+            sys.stdout = open(os.devnull, 'w')
+        print("*****************************************************************")
+        print("S=", probe_set)
+        counter += 1
+        u = myUtilityForExactXCases(input, l, k, set(probe_set))
+        if loggingLevel == 1:
+            sys.stdout = sys.__stdout__
+        if counter == 1:
+            secondBestU = u
+            maxU = u
+            maxSets = set()
+            maxSets.add(probe_set)
+        else:
+            if u > maxU:
+                secondBestU = maxU
+                maxU = u
+                maxSets = set()
+                maxSets.add(probe_set)
+            elif u == maxU:
+                maxSets.add(probe_set)
+        print("when probe-set=",set(probe_set),",u=",u)
+
+    print("*****************************************************************")
+    print("Utility is maximum (", maxU,") when probeset is (one of) the following: ")
+    for bestSet in maxSets:
+        print(bestSet, "corresponding prob:", input[list(bestSet)])
+    abstand = maxU-secondBestU
+    signif = abstand > s
+    print("secondBestU:", secondBestU, "diff=", maxU-secondBestU,
+          "significant diff?: ", signif)
+    if loggingLevel == 0:
+        sys.stdout = sys.__stdout__
+
+    return maxSets, maxU, secondBestU, signif
+
 ############################# Example #################################
 input = np.array( [0.081, 0.745, 0.954, 0.954])
 n = len(input)
@@ -180,4 +225,4 @@ l = 3
 k = 2
 loggingLevel = 0 # 0 for no logging at all # 1 for end-result, # 2 for detailed
 sifnificance_level = pow(10, -8)
-maxSets, maxU, secondBestU, signif= computeUforAllPossibleS(input, l, k, sifnificance_level, loggingLevel)
+maxSets, maxU, secondBestU, signif= computeUforAllPossibleS_threshold_case(input, l, k, sifnificance_level, loggingLevel)
