@@ -175,7 +175,7 @@ def computeUforAllPossibleS_threshold_case(input, l, k, s, loggingLevel):
 
 # same function as above, but for the exactX case. Duplicated Code, yes. But for the sake of computing speed,
 # I don't want to introduce yet another if condition (which will be repeatedly assessed)
-def computeUforAllPossibleS_ExactX_case(input, l, k, s, loggingLevel):
+def computeUforAllPossibleS_ExactX_case(input, m, k, s, loggingLevel):
     n = len(input)
     maxU = 0
     secondBestU = 0
@@ -187,7 +187,7 @@ def computeUforAllPossibleS_ExactX_case(input, l, k, s, loggingLevel):
         print("*****************************************************************")
         print("S=", probe_set)
         counter += 1
-        u = myUtilityForExactXCases(input, l, k, set(probe_set))
+        u = myUtilityForExactXCases(input, m, k, set(probe_set))
         if loggingLevel == 1:
             sys.stdout = sys.__stdout__
         if counter == 1:
@@ -219,10 +219,19 @@ def computeUforAllPossibleS_ExactX_case(input, l, k, s, loggingLevel):
     return maxSets, maxU, secondBestU, signif
 
 ############################# Example #################################
-input = np.array( [0.081, 0.745, 0.954, 0.954])
-n = len(input)
-l = 3
-k = 2
-loggingLevel = 0 # 0 for no logging at all # 1 for end-result, # 2 for detailed
-sifnificance_level = pow(10, -8)
-maxSets, maxU, secondBestU, signif= computeUforAllPossibleS_threshold_case(input, l, k, sifnificance_level, loggingLevel)
+
+####### threshold case ########
+# input = np.array( [0.081, 0.745, 0.954, 0.954])
+# l = 3
+# k = 2
+# loggingLevel = 0 # 0 for no logging at all # 1 for end-result, # 2 for detailed
+# sifnificance_level = pow(10, -8)
+# maxSets, maxU, secondBestU, signif= computeUforAllPossibleS_threshold_case(input, l, k, sifnificance_level, loggingLevel)
+
+####### exactX case ########
+# input = np.array( [0.1, 0.2, 0.5, 0.8])
+# m = 3
+# k = 2
+# loggingLevel = 1 # 0 for no logging at all # 1 for end-result, # 2 for detailed
+# significance_level = pow(10, -8)
+# computeUforAllPossibleS_ExactX_case(input, m, k, significance_level, loggingLevel)
