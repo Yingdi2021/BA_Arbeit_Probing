@@ -34,7 +34,8 @@ def test_conjecture_threshold_case(simulation_nr_per_combination):
                     inputData = np.round(inputData, 3)
 
                     # find optimal probe-set(s) for this random input. surpress output
-                    maxSets, maxU, secondBestU, significant = computeUforAllPossibleS_threshold_case(inputData, l, k, sifnificance_level, 0)
+                    maxSets, maxU, secondBestU, significant = computeUforAllPossibleS_threshold_case(inputData, l, k,
+                                                                                                     sifnificance_level)
 
                     # check if the optimal probe-set(s) violates our conjecture
                     if significant == True: # of course only when it's significant
@@ -56,7 +57,8 @@ def test_conjecture_exactX_case(simulation_nr_per_combination):
                     inputData = np.round(inputData, 3)
 
                     # find optimal probe-set(s) for this random input. surpress output
-                    maxSets, maxU, secondBestU, significant = computeUforAllPossibleS_ExactX_case(inputData, m, k, sifnificance_level, 0)
+                    maxSets, maxU, secondBestU, significant = computeUforAllPossibleS_ExactX_case(inputData, m, k,
+                                                                                                  sifnificance_level)
 
                     # check if the optimal probe-set(s) violates our conjecture
                     if significant == True: # of course only when it's significant
@@ -82,7 +84,8 @@ def test_conjecture_XorY_case(simulation_nr_per_combination):
                         inputData = np.round(inputData, 3)
 
                         # find optimal probe-set(s) for this random input. surpress output
-                        maxSets, maxU, secondBestU, significant = computeUforAllPossibleS_XorY_case(inputData, x,y,k, sifnificance_level, 0)
+                        maxSets, maxU, secondBestU, significant = computeUforAllPossibleS_XorY_case(inputData, x, y, k,
+                                                                                                    sifnificance_level)
 
                         # check if the optimal probe-set(s) violates our conjecture
                         if significant == True: # of course only when it's significant

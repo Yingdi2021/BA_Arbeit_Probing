@@ -22,8 +22,8 @@ for n in range(n, n + 1):
                 inputData = sorted(np.random.rand(n))
                 inputData = np.round(inputData, 3)
                 violate = False
-                maxSets, maxU, secondBestU, signif = computeUforAllPossibleS_threshold_case(
-                    inputData, l, k, sifnificance_level, 0)
+                maxSets, maxU, secondBestU, signif = computeUforAllPossibleS_threshold_case(inputData, l, k,
+                                                                                            sifnificance_level)
                 if signif == True:
                     meaningful += 1
                     for maxSet in maxSets:
