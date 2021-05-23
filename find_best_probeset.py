@@ -122,6 +122,22 @@ def myUtilityForExactXCases(input, m, k, S):
             print("--> probability, that d=",d,"AND we make the right decision is",ps*(1-c))
             utility += ps*(1-c)
 
+    # if there are more than m 1s in probe-set, we always make the right decision: reject
+    if k > m:
+        for d in range(m+1,k+1):
+            print("*********************")
+            print("Calculating probability of having excatly",d,"Eins in the probe-set")
+            subsets_for_this_d = findsubsets(S, d)
+            print("there are in total", len(subsets_for_this_d), "subsets: ", subsets_for_this_d, "for d=", d)
+            ps = 0
+            for subset in subsets_for_this_d:
+                remaining_nulls = S - set(subset)
+                p_subset = multiplyPand1MinusP(input, set(subset), remaining_nulls)
+                print("subset:",set(subset), "R=", remaining_nulls, "p=",p_subset)
+                ps += p_subset
+            print("probability, that there are exactly", d, "Eins in probe-set AND we make the right decision is:", ps)
+            utility += ps
+
     print("-------------\nResult:")
     print("utiliiy=", utility, "when we select the probe-set:", S)
     return utility
