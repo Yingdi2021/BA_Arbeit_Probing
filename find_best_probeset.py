@@ -69,7 +69,7 @@ def myUtilityForThresholdCases(input, l, k, S):
 
     logging.debug("-------------\nResult:")
     logging.debug("utiliiy=%s when we select the probe-set: %s", utility, S)
-    return utility
+    return round(utility,10)
 
 # calculates the utility (probability of making the right decision)
 # given input data, m (how many 1s EXACTLY), k(probe-set size) and S(the probe-set)
@@ -133,7 +133,7 @@ def myUtilityForExactXCases(input, m, k, S):
 
     logging.debug("-------------\nResult:")
     logging.debug("utiliiy=%s when we select the probe-set: %s", utility, S)
-    return utility
+    return round(utility,10)
 
 
 # calculates the utility (probability of making the right decision)
@@ -194,7 +194,7 @@ def myUtilityForXorYcases(input, x, y, k, S):
 
     logging.debug("-------------\nResult:")
     logging.debug("utiliiy=%s when we select the probe-set: %s", utility, S)
-    return utility
+    return round(utility,10)
 
 # given an input (a vector of n probabilities/the groundset), parameters l, k
 # calculate utility for all possible probe-sets (of size k)
