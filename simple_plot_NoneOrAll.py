@@ -11,7 +11,7 @@ f.close()
 print("true_percentage:", true_percentage)
 print("startingBit_average:", startingBit_average)
 
-fig = plt.figure()
+fig = plt.figure("n="+str(n))
 ax = fig.add_subplot(111)
 
 label1 = 'starting bit'
@@ -33,6 +33,7 @@ plt.xticks(np.arange(min(k), max(k)+1, 1.0))
 ax.set_yticks(np.arange(0, max(k), 1.0))
 ax2.set_yticks(np.arange(0, 110, 10))
 
-ax.legend(lns, labs, bbox_to_anchor=(1.05, 1.0), loc='upper left')
+plt.title("n = " + str(n))
+ax.legend(lns, labs, bbox_to_anchor=(1.1, 1.0), loc='upper left')
 plt.tight_layout()
 plt.show()

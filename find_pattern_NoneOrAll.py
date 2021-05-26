@@ -40,9 +40,13 @@ for k in range(2, n):
     if len(startingBits)>0:
         averageStartingBit = round(statistics.mean(startingBits),4)
         startingBit_average.append(averageStartingBit)
-        startingBit_std.append(statistics.stdev(startingBits))
-        logging.error("n=%s, k=%s, #true_instances=%s (out of %s), average starting bit = %s", n, k,
-                      true_instances, simulation_num, averageStartingBit)
+        if len(startingBits)>1:
+            std = round(statistics.stdev(startingBits),3)
+        else:
+            std = float("Nan")
+        startingBit_std.append(std)
+        logging.error("n=%s, k=%s, #true_instances=%s (out of %s), average starting bit = %s, std=%s", n, k,
+                      true_instances, simulation_num, averageStartingBit, std)
     else:
         logging.error("n=%s, k=%s, #true_instances=%s, all %s instances are ANY.", n, k, true_instances,
                       simulation_num)
@@ -52,6 +56,7 @@ for k in range(2, n):
 
 print("true_percentage:", true_percentage)
 print("startingBit_average:", startingBit_average)
+print("startingBit_std", startingBit_std)
 
 f = open("none_or_all_n="+str(n)+".pkl", 'wb')
 pickle.dump([true_percentage,startingBit_average], f)
