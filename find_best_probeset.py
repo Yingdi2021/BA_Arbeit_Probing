@@ -1,6 +1,7 @@
 import numpy as np
 import itertools
 import logging
+from optimum import Optimum
 
 #################### Helper-functions #########################
 # a frequently used operation
@@ -230,10 +231,15 @@ def computeUforAllPossibleS_threshold_case(input, l, k, s):
     logging.info("Utility is maximum (%s) when probeset is (one of) the following:", maxU)
     for bestSet in maxSets:
         logging.info("%s corresponding prob: %s", bestSet, input[list(bestSet)])
-    abstand = maxU-secondBestU
-    signif = abstand > s
-    logging.info("secondBestU: %s, diff=%s, significant diff?: %s", secondBestU, maxU - secondBestU, signif)
-
+    if len(maxSets) == len(findsubsets(set(range(n)), k)):
+        signif = Optimum.ANY
+    else:
+        abstand = maxU - secondBestU
+        if abstand > s:
+            signif = Optimum.TRUE
+        else:
+            signif = Optimum.PSEUDO
+    logging.info("secondBestU: %s, diff=%s, is there an optimal?: %s", secondBestU, maxU - secondBestU, signif)
     return maxSets, maxU, secondBestU, signif
 
 # same function as above, but for the exactX case. Duplicated Code, yes. But for the sake of computing speed,
@@ -268,9 +274,15 @@ def computeUforAllPossibleS_ExactX_case(input, m, k, s):
     logging.info("Utility is maximum (%s) when probeset is (one of) the following: ", maxU)
     for bestSet in maxSets:
         logging.info("%s corresponding prob: %s", bestSet, input[list(bestSet)])
-    abstand = maxU-secondBestU
-    signif = abstand > s
-    logging.info("secondBestU: %s, diff=%s, significant diff?: %s", secondBestU, maxU - secondBestU, signif)
+    if len(maxSets) == len(findsubsets(set(range(n)), k)):
+        signif = Optimum.ANY
+    else:
+        abstand = maxU - secondBestU
+        if abstand > s:
+            signif = Optimum.TRUE
+        else:
+            signif = Optimum.PSEUDO
+    logging.info("secondBestU: %s, diff=%s, is there an optimal?: %s", secondBestU, maxU - secondBestU, signif)
 
     return maxSets, maxU, secondBestU, signif
 
@@ -306,9 +318,15 @@ def computeUforAllPossibleS_XorY_case(input, x, y, k, s):
     logging.info("Utility is maximum (%s) when probeset is (one of) the following: ", maxU)
     for bestSet in maxSets:
         logging.info("%s corresponding prob: %s", bestSet, input[list(bestSet)])
-    abstand = maxU - secondBestU
-    signif = abstand > s
-    logging.info("secondBestU: %s, diff=%s, significant diff?: %s", secondBestU, maxU - secondBestU, signif)
+    if len(maxSets) == len(findsubsets(set(range(n)), k)):
+        signif = Optimum.ANY
+    else:
+        abstand = maxU - secondBestU
+        if abstand > s:
+            signif = Optimum.TRUE
+        else:
+            signif = Optimum.PSEUDO
+    logging.info("secondBestU: %s, diff=%s, is there an optimal?: %s", secondBestU, maxU - secondBestU, signif)
 
     return maxSets, maxU, secondBestU, signif
 

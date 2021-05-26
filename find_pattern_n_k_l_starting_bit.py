@@ -2,10 +2,11 @@ import pandas as pd
 import numpy as np
 from find_best_probeset import computeUforAllPossibleS_threshold_case
 import statistics
+from optimum import Optimum
 
 sifnificance_level = pow(10, -8)
 loggingLevel = 0
-simulation_num = 100
+simulation_num = 1000
 
 n = 5
 df = pd.DataFrame({'k': range(2, n)})
@@ -16,22 +17,32 @@ for n in range(n, n + 1):
         for k in range(2, n):
             print("######################################################")
             # run ${simulation_num} meaningful simulations
-            meaningful = 0
+            any_instances = 0 # how many of the ${simulation_num} instances are those who are indifferent to probeset?
+            true_instances = 0 # how many of ... are those which we are interested in: exists a real optimum!
+            pseudo_instances = 0 # how many of ... are those, who have a max-probeset but rather shaky...
             startingBits = []
-            while meaningful < simulation_num:
+            while any_instances + true_instances < simulation_num:
                 inputData = sorted(np.random.rand(n))
                 inputData = np.round(inputData, 3)
                 violate = False
                 maxSets, maxU, secondBestU, signif = computeUforAllPossibleS_threshold_case(inputData, l, k,
                                                                                             sifnificance_level)
-                if signif == True:
-                    meaningful += 1
-                    for maxSet in maxSets:
-                        startingBits.append(maxSet[0])
-            averageStartingBit = statistics.mean(startingBits)
-            ls.append(averageStartingBit)
-            print("n=", n, ",l=", l, ",k=", k, "average starting bit:",
-                  averageStartingBit)
+                if signif == Optimum.ANY:
+                    any_instances += 1
+                elif signif == Optimum.TRUE:
+                    true_instances += 1
+                for maxSet in maxSets:
+                    startingBits.append(maxSet[0])
+                else: # pseudo, ignore
+                    pseudo_instances += 1
+            # look at the result
+            if len(startingBits) > 0:
+                averageStartingBit = round(statistics.mean(startingBits), 3)
+                ls.append(averageStartingBit)
+                print("n=", n, ",l=", l, ",k=", k, ", #ANY_instances=", any_instances, ",#true_instances=",
+                      true_instances, "average starting bit=", averageStartingBit)
+            else:
+                print("n=", n, ",l=", l, ",k=", k, "all instances are ANY.")
         df["l" + str(l)] = ls
 
 print(df)
