@@ -74,8 +74,8 @@ def test_conjecture_exactX_case(simulation_nr_per_combination):
 
 def test_conjecture_XorY_case(simulation_nr_per_combination):
     for n in range(4, 11):
-        for x in range(n):
-            for y in range(x+1,n+1):
+        for x in range(0,1):
+            for y in range(n,n+1):
                 for k in range(2, n+1):
                     violate = False
                     violationOptimalProbeSets = set()
@@ -95,9 +95,9 @@ def test_conjecture_XorY_case(simulation_nr_per_combination):
                                     # print("n=", n, ",m=",m, ",k=", k, "violation!", maxSet, np.array(inputData)[list(maxSet)], "inputData：", inputData)
                                     violationOptimalProbeSets.add(maxSet)
 
-                        print("n=", n, ",x=",x, "y=",y, ",k=", k,"finished. Any violation?", violate)
-                        if violate:
-                                print("optimal Probeset(s):", violationOptimalProbeSets)
+                    print("n=", n, ",x=",x, "y=",y, ",k=", k,"finished. Any violation?", violate)
+                    if violate:
+                            print("optimal Probeset(s):", violationOptimalProbeSets)
 
 sifnificance_level = pow(10, -8)
 simulation_nr_per_combination = 1000
@@ -108,5 +108,5 @@ simulation_nr_per_combination = 1000
 # test the conjecture for the exactX case
 # test_conjecture_exactX_case(simulation_nr_per_combination)
 
-# test the conjecture for the XorY case
+# test the conjecture for the none_or_all case
 test_conjecture_XorY_case(simulation_nr_per_combination)
