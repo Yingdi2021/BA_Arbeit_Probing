@@ -19,12 +19,15 @@ def runAllCombinationsExactOne():
         any_percentage = []
         startingBit_average = []
         startingBit_std = []
+        trueOptimalNum_average = []
+        trueOptimalNum_std = []
 
         for k in range(2, n):
             any_instances = 0  # how many of the ${simulation_num} instances are those who are indifferent to probeset?
             true_instances = 0  # how many of ... are those which we are interested in: exists a real optimum!
             pseudo_instances = 0  # how many of ... are those, who have a max-probeset but rather shaky...
             startingBits = []
+            true_optimal_nums = []
             while any_instances + true_instances < simulation_num:
                 inputData = sorted(np.random.rand(n))
                 inputData = np.round(inputData, 3)
@@ -35,21 +38,29 @@ def runAllCombinationsExactOne():
                     any_instances += 1
                 elif signif == Optimum.TRUE:
                     true_instances += 1
+                    true_optimal_nums.append(len(maxSets))
                     for maxSet in maxSets:
                         startingBits.append(maxSet[0])
                 else:  # pseudo, ignore
                     pseudo_instances += 1
             # look at the result
-            if len(startingBits) > 0:
+            # print(true_optimal_nums)
+            if true_instances > 0:
                 averageStartingBit = round(statistics.mean(startingBits), 4)
                 startingBit_average.append(averageStartingBit)
+                trueOptimalNum = round(statistics.mean(true_optimal_nums),1)
+                trueOptimalNum_average.append(trueOptimalNum)
                 if len(startingBits) > 1:
-                    std = round(statistics.stdev(startingBits), 3)
+                    starting_bit_std = round(statistics.stdev(startingBits), 3)
+                    true_optimal_stdd = round(statistics.stdev(true_optimal_nums),3)
                 else:
-                    std = float("Nan")
-                startingBit_std.append(std)
-                logging.error("n=%s, k=%s, #true_instances=%s (out of %s), average starting bit = %s, std=%s", n, k,
-                              true_instances, simulation_num, averageStartingBit, std)
+                    starting_bit_std = float("Nan")
+                    true_optimal_stdd = float("Nan")
+                startingBit_std.append(starting_bit_std)
+                trueOptimalNum_std.append(true_optimal_stdd)
+                logging.error("n=%s, k=%s, #true_instances=%s (out of %s), true_optimal_num: average=%s, std=%s, "
+                              "average starting bit = %s, std=%s, ", n, k, true_instances, simulation_num,
+                              trueOptimalNum, true_optimal_stdd, averageStartingBit, starting_bit_std)
             else:
                 logging.error("n=%s, k=%s, #true_instances=%s, all %s instances are ANY.", n, k, true_instances,
                               simulation_num)
@@ -67,6 +78,10 @@ def runAllCombinationsExactOne():
         pickle.dump([true_percentage, any_percentage, startingBit_average], f)
         f.close()
 
+    # TODO save the data (for later visualisation purpose)
+    # number of true optimal: average, std.
+    # use dataframe!
+
 def runAllCombinationsNoneOrAll():
     x = 0
 
@@ -77,12 +92,15 @@ def runAllCombinationsNoneOrAll():
         any_percentage = []
         startingBit_average = []
         startingBit_std = []
+        trueOptimalNum_average = []
+        trueOptimalNum_std = []
 
         for k in range(2, n):
             any_instances = 0 # how many of the ${simulation_num} instances are those who are indifferent to probeset?
             true_instances = 0 # how many of ... are those which we are interested in: exists a real optimum!
             pseudo_instances = 0 # how many of ... are those, who have a max-probeset but rather shaky...
             startingBits = []
+            true_optimal_nums = []
             while any_instances+true_instances < simulation_num:
                 inputData = sorted(np.random.rand(n))
                 inputData = np.round(inputData, 3)
@@ -92,21 +110,29 @@ def runAllCombinationsNoneOrAll():
                     any_instances += 1
                 elif signif == Optimum.TRUE:
                     true_instances += 1
+                    true_optimal_nums.append(len(maxSets))
                     for maxSet in maxSets:
                         startingBits.append(maxSet[0])
                 else: # pseudo, ignore
                     pseudo_instances += 1
             # look at the result
-            if len(startingBits)>0:
-                averageStartingBit = round(statistics.mean(startingBits),4)
+            # print(true_optimal_nums)
+            if true_instances > 0:
+                averageStartingBit = round(statistics.mean(startingBits), 4)
                 startingBit_average.append(averageStartingBit)
-                if len(startingBits)>1:
-                    std = round(statistics.stdev(startingBits),3)
+                trueOptimalNum = round(statistics.mean(true_optimal_nums),1)
+                trueOptimalNum_average.append(trueOptimalNum)
+                if len(startingBits) > 1:
+                    starting_bit_std = round(statistics.stdev(startingBits), 3)
+                    true_optimal_stdd = round(statistics.stdev(true_optimal_nums),3)
                 else:
-                    std = float("Nan")
-                startingBit_std.append(std)
-                logging.error("n=%s, k=%s, #true_instances=%s (out of %s), average starting bit = %s, std=%s", n, k,
-                              true_instances, simulation_num, averageStartingBit, std)
+                    starting_bit_std = float("Nan")
+                    true_optimal_stdd = float("Nan")
+                startingBit_std.append(starting_bit_std)
+                trueOptimalNum_std.append(true_optimal_stdd)
+                logging.error("n=%s, k=%s, #true_instances=%s (out of %s), true_optimal_num: average=%s, std=%s, "
+                              "average starting bit = %s, std=%s, ", n, k, true_instances, simulation_num,
+                              trueOptimalNum, true_optimal_stdd, averageStartingBit, starting_bit_std)
             else:
                 logging.error("n=%s, k=%s, #true_instances=%s, all %s instances are ANY.", n, k, true_instances,
                               simulation_num)
