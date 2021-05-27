@@ -2,6 +2,7 @@ import numpy as np
 from find_best_probeset import computeUforAllPossibleS_threshold_case
 from find_best_probeset import computeUforAllPossibleS_ExactX_case
 from find_best_probeset import computeUforAllPossibleS_XorY_case
+from optimum import Optimum
 
 #################### Helper-functions #########################
 # check if a given sub-set is consecutive. e.g. 234, 123, 3456, etc
@@ -48,9 +49,11 @@ def test_conjecture_threshold_case(simulation_nr_per_combination):
 
 def test_conjecture_exactX_case(simulation_nr_per_combination):
     for n in range(4, 11):
-        for m in range(n):
-            for k in range(2, n+1):
+        for m in range(1,2):
+            for k in range(2, n):
                 violate = False
+                any_instances = 0
+                true_instances = 0
                 violationOptimalProbeSets = set()
                 for i in range(simulation_nr_per_combination):
                     inputData = sorted(np.random.rand(n))
@@ -59,18 +62,19 @@ def test_conjecture_exactX_case(simulation_nr_per_combination):
                     # find optimal probe-set(s) for this random input. surpress output
                     maxSets, maxU, secondBestU, significant = computeUforAllPossibleS_ExactX_case(inputData, m, k,
                                                                                                   sifnificance_level)
-
                     # check if the optimal probe-set(s) violates our conjecture
-                    if significant == True: # of course only when it's significant
+                    if significant == Optimum.ANY:
+                        any_instances += 1
+                    elif significant == Optimum.TRUE: # of course only when it's significant
+                        true_instances += 1
                         for maxSet in maxSets:
                             if not checkIfConsecutiveRepeatingValueSafe(maxSet, inputData):
                                 violate = True
                                 # print("n=", n, ",m=",m, ",k=", k, "violation!", maxSet, np.array(inputData)[list(maxSet)], "inputData：", inputData)
                                 violationOptimalProbeSets.add(maxSet)
-
+                print("n=", n, ",m=",m, ",k=", k,"finished. Any violation?", violate)
                 if violate:
-                    print("n=", n, ",m=",m, ",k=", k,"finished. Any violation?", violate)
-                    print("optimal Probeset(s):", violationOptimalProbeSets)
+                    print("non-consecutive optimal-Probeset(s):", violationOptimalProbeSets)
 
 def test_conjecture_XorY_case(simulation_nr_per_combination):
     for n in range(4, 11):
@@ -106,7 +110,7 @@ simulation_nr_per_combination = 1000
 # test_conjecture_threshold_case(simulation_nr_per_combination)
 
 # test the conjecture for the exactX case
-# test_conjecture_exactX_case(simulation_nr_per_combination)
+test_conjecture_exactX_case(simulation_nr_per_combination)
 
 # test the conjecture for the none_or_all case
-test_conjecture_XorY_case(simulation_nr_per_combination)
+# test_conjecture_XorY_case(simulation_nr_per_combination)

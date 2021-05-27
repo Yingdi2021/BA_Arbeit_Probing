@@ -13,11 +13,11 @@ x = 0
 y = n
 
 true_percentage = []
+any_percentage = []
 startingBit_average = []
 startingBit_std = []
 
 for k in range(2, n):
-    # run ${simulation_num} meaningful simulations
     any_instances = 0 # how many of the ${simulation_num} instances are those who are indifferent to probeset?
     true_instances = 0 # how many of ... are those which we are interested in: exists a real optimum!
     pseudo_instances = 0 # how many of ... are those, who have a max-probeset but rather shaky...
@@ -25,7 +25,6 @@ for k in range(2, n):
     while any_instances+true_instances < simulation_num:
         inputData = sorted(np.random.rand(n))
         inputData = np.round(inputData, 3)
-        violate = False
         maxSets, maxU, secondBestU, signif = computeUforAllPossibleS_XorY_case(inputData,x, y, k, sifnificance_level)
 
         if signif == Optimum.ANY:
@@ -53,11 +52,13 @@ for k in range(2, n):
         startingBit_average.append(float("Nan"))
         startingBit_std.append(float("Nan"))
     true_percentage.append(true_instances*100/simulation_num)
+    any_percentage.append(any_instances*100/simulation_num)
 
 print("true_percentage:", true_percentage)
+print("any_percentage:", any_percentage)
 print("startingBit_average:", startingBit_average)
 print("startingBit_std", startingBit_std)
 
 f = open("none_or_all_n="+str(n)+".pkl", 'wb')
-pickle.dump([true_percentage,startingBit_average], f)
+pickle.dump([true_percentage, any_percentage, startingBit_average], f)
 f.close()
