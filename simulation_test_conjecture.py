@@ -1,3 +1,5 @@
+import logging
+
 import numpy as np
 from find_best_probeset import computeUforAllPossibleS_threshold_case
 from find_best_probeset import computeUforAllPossibleS_ExactX_case
@@ -86,14 +88,16 @@ def test_conjecture_XorY_case(simulation_nr_per_combination):
                     for i in range(simulation_nr_per_combination):
                         inputData = sorted(np.random.rand(n))
                         inputData = np.round(inputData, 3)
+                        logging.debug("input data=%s", inputData)
 
                         # find optimal probe-set(s) for this random input. surpress output
                         maxSets, maxU, secondBestU, significant = computeUforAllPossibleS_XorY_case(inputData, x, y, k,
                                                                                                     sifnificance_level)
 
                         # check if the optimal probe-set(s) violates our conjecture
-                        if significant == True: # of course only when it's significant
+                        if significant == Optimum.TRUE: # of course only when there's a true optimal subset
                             for maxSet in maxSets:
+                                logging.debug("n=%s, k=%s, maxSet found: %s", n,k,maxSet)
                                 if not checkIfConsecutiveRepeatingValueSafe(maxSet, inputData):
                                     violate = True
                                     # print("n=", n, ",m=",m, ",k=", k, "violation!", maxSet, np.array(inputData)[list(maxSet)], "inputData：", inputData)

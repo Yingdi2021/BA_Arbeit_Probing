@@ -112,6 +112,8 @@ def runAllCombinationsNoneOrAll():
                     true_instances += 1
                     true_optimal_nums.append(len(maxSets))
                     for maxSet in maxSets:
+                        logging.debug("true optimal found: %s", maxSet)
+                        logging.debug("starting point= %s", maxSet[0])
                         startingBits.append(maxSet[0])
                 else: # pseudo, ignore
                     pseudo_instances += 1
