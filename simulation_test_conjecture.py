@@ -4,6 +4,7 @@ import numpy as np
 from find_best_probeset import computeUforAllPossibleS_threshold_case
 from find_best_probeset import computeUforAllPossibleS_ExactX_case
 from find_best_probeset import computeUforAllPossibleS_XorY_case
+from find_best_probeset import computeUforAllPossibleS_XOR_case
 from optimum import Optimum
 
 #################### Helper-functions #########################
@@ -107,6 +108,33 @@ def test_conjecture_XorY_case(simulation_nr_per_combination):
                     if violate:
                             print("optimal Probeset(s):", violationOptimalProbeSets)
 
+def test_conjecture_XOR_case(simulation_nr_per_combination):
+    for n in range(4, 11):
+        for k in range(2, n+1):
+            violate = False
+            violationOptimalProbeSets = set()
+            for i in range(simulation_nr_per_combination):
+                inputData = sorted(np.random.rand(n))
+                inputData = np.round(inputData, 3)
+                logging.debug("input data=%s", inputData)
+
+                # find optimal probe-set(s) for this random input. surpress output
+                maxSets, maxU, secondBestU, significant = computeUforAllPossibleS_XOR_case(inputData, k, sifnificance_level)
+
+                # check if the optimal probe-set(s) violates our conjecture
+                if significant == Optimum.TRUE: # of course only when there's a true optimal subset
+                    for maxSet in maxSets:
+                        logging.debug("n=%s, k=%s, maxSet found: %s", n,k,maxSet)
+                        if not checkIfConsecutiveRepeatingValueSafe(maxSet, inputData):
+                            violate = True
+                            # print("n=", n, ",m=",m, ",k=", k, "violation!", maxSet, np.array(inputData)[list(maxSet)], "inputData：", inputData)
+                            violationOptimalProbeSets.add(maxSet)
+
+            print("n=", n, ",k=", k,"finished. Any violation?", violate)
+            if violate:
+                print("optimal Probeset(s):", violationOptimalProbeSets)
+
+
 sifnificance_level = pow(10, -8)
 simulation_nr_per_combination = 1000
 
@@ -114,7 +142,10 @@ simulation_nr_per_combination = 1000
 # test_conjecture_threshold_case(simulation_nr_per_combination)
 
 # test the conjecture for the exactX case
-test_conjecture_exactX_case(simulation_nr_per_combination)
+# test_conjecture_exactX_case(simulation_nr_per_combination)
 
 # test the conjecture for the none_or_all case
 # test_conjecture_XorY_case(simulation_nr_per_combination)
+
+# test the conjecture for the XOR case
+test_conjecture_XOR_case(simulation_nr_per_combination)

@@ -17,6 +17,34 @@ def multiplyPand1MinusP(input, setP, set1MinusP):
 # of a given Set, as a list.
 def findsubsets(set, subset_size):
     return list(itertools.combinations(set, subset_size))
+
+# given a n-vector of probabilities p1, p2,...pn corresponding the prob that event 1, event 2, .. event n happens
+# and a constant m <= n
+# return the prob that in total m events happen
+def calculateProbCertainNumberOfEventsHappen(ps, m):
+    n = len(ps)
+    assert m <= n
+    pss = np.subtract(1, ps)
+    result = 0
+    for setThatHappens in findsubsets(set(range(n)), m):
+        setThatDoesNotHappen = set(range(n)) - set(setThatHappens)
+        temp = 1
+        for i in setThatHappens:
+            temp *= ps[i]
+        for j in setThatDoesNotHappen:
+            temp *= pss[j]
+        result += temp
+    return result
+
+# given a n-vector of probabilities p1, p2,...pn corresponding the prob that event 1, event 2, .. event n happens
+# return the prob that in total an even number of events happen
+def calculateProbEvenNumberOfEventsHappen(ps):
+    n = len(ps)
+    result = 0
+    for num in np.arange(0, n, 2):
+        result += calculateProbCertainNumberOfEventsHappen(ps, num)
+    return result
+
 ################################################################
 
 # calculates the utility (probability of making the right decision)
@@ -197,6 +225,28 @@ def myUtilityForXorYcases(input, x, y, k, S):
     logging.debug("utiliiy=%s when we select the probe-set: %s", utility, S)
     return round(utility,10)
 
+# calculates the utility (probability of making the right decision)
+# given input data and S (the probe-set)
+# for the XOR case, ie. acceptance criteria is: number of 1s is even.
+def myUtilityForXORcases(inputData, S):
+    n = len(inputData)
+    N = set(range(n))
+    R = N - S
+    restData = inputData[list(R)]
+    utility = 0
+
+    # # 1. in case there are even number of 1s in probeset
+    # p_probeEven = calculateProbEvenNumberOfEventsHappen(probeData)
+    # p_restEven = calculateProbEvenNumberOfEventsHappen(restData)
+    # utility += p_probeEven * max(p_restEven, 1-p_restEven)
+    # # 2. in case there are odd number of 1s in probeset:
+    # p_probeOdd = 1-p_probeEven
+    # p_restOdd = 1-p_restEven
+    # utility += p_probeOdd * max(p_restOdd, 1-p_restOdd)
+    p_restEven = calculateProbEvenNumberOfEventsHappen(restData)
+    utility += max(p_restEven, 1-p_restEven)
+    return utility
+
 # given an input (a vector of n probabilities/the groundset), parameters l, k
 # calculate utility for all possible probe-sets (of size k)
 # returns the optimal probe-set(s) and the corresponding utility score.
@@ -330,6 +380,50 @@ def computeUforAllPossibleS_XorY_case(input, x, y, k, s):
 
     return maxSets, maxU, secondBestU, signif
 
+# same function as above, but for the XOR case. Duplicated Code, yes. But for the sake of computing speed,
+# I don't want to introduce yet another if condition (which will be repeatedly assessed)
+def computeUforAllPossibleS_XOR_case(input, k, s):
+    n = len(input)
+    maxU = 0
+    secondBestU = 0
+    maxSets = set()
+    counter = 0
+    for probe_set in findsubsets(set(range(n)), k):
+        counter += 1
+        logging.debug("*****************************************************************")
+        logging.debug("possible probeset %s: S=%s", counter, probe_set)
+        u = myUtilityForXORcases(input, set(probe_set))
+        if counter == 1:
+            secondBestU = u
+            maxU = u
+            maxSets = set()
+            maxSets.add(probe_set)
+        else:
+            if u > maxU:
+                secondBestU = maxU
+                maxU = u
+                maxSets = set()
+                maxSets.add(probe_set)
+            elif u == maxU:
+                maxSets.add(probe_set)
+        logging.info("when probe-set=%s, u=%s", set(probe_set), u)
+
+    logging.info("*****************************************************************")
+    logging.info("Utility is maximum (%s) when probeset is (one of) the following: ", maxU)
+    for bestSet in maxSets:
+        logging.info("%s corresponding prob: %s", bestSet, input[list(bestSet)])
+    if len(maxSets) == len(findsubsets(set(range(n)), k)):
+        signif = Optimum.ANY
+    else:
+        abstand = maxU - secondBestU
+        if abstand > s:
+            signif = Optimum.TRUE
+        else:
+            signif = Optimum.PSEUDO
+    logging.info("secondBestU: %s, diff=%s, is there an optimal?: %s", secondBestU, maxU - secondBestU, signif)
+
+    return maxSets, maxU, secondBestU, signif
+
 ############################# Example #################################
 
 # configure the level of logging here: DEBUG (detailed output), INFO (limited output), ERROR(no output)
@@ -356,3 +450,9 @@ logging.basicConfig(level=logging.ERROR)
 # k = 3
 # significance_level = pow(10, -8)
 # computeUforAllPossibleS_XorY_case(input, x, y, k, significance_level)
+
+####### XOR case ########
+input = np.array( [0.017, 0.102, 0.167, 0.294, 0.328, 0.459, 0.565, 0.881])
+k = 4
+significance_level = pow(10, -8)
+computeUforAllPossibleS_XOR_case(input, k, significance_level)

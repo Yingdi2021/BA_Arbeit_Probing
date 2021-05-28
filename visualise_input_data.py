@@ -23,8 +23,10 @@ for n in range(5, 9):
             # plot the NoneOrAll cases
             # maxSets, maxU, secondBestU, significant = computeUforAllPossibleS_XorY_case(inputData, 0, n, k, sifnificance_level)
             # plot the exactOne cases
-            maxSets, maxU, secondBestU, significant = computeUforAllPossibleS_ExactX_case(inputData, 1, k,
-                                                                                          sifnificance_level)
+            # maxSets, maxU, secondBestU, significant = computeUforAllPossibleS_ExactX_case(inputData, 1, k, sifnificance_level)
+            # plot the XOR cases
+            maxSets, maxU, secondBestU, significant = computeUforAllPossibleS_XOR_case(inputData, k, significance_level)
+
 
             if significant == Optimum.TRUE:
                 y = fake_y + counter
