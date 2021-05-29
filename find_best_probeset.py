@@ -257,6 +257,7 @@ def computeUforAllPossibleS_threshold_case(input, l, k, s):
     secondBestU = 0
     maxSets = set()
     counter = 0
+    secondBestUpdated = False
     for probe_set in findsubsets(set(range(n)), k):
         logging.debug("*****************************************************************")
         logging.debug("S=%s", probe_set)
@@ -270,6 +271,7 @@ def computeUforAllPossibleS_threshold_case(input, l, k, s):
         else:
             if u > maxU:
                 secondBestU = maxU
+                secondBestUpdated = True
                 maxU = u
                 maxSets = set()
                 maxSets.add(probe_set)
@@ -283,6 +285,8 @@ def computeUforAllPossibleS_threshold_case(input, l, k, s):
         logging.info("%s corresponding prob: %s", bestSet, input[list(bestSet)])
     if len(maxSets) == len(findsubsets(set(range(n)), k)):
         signif = Optimum.ANY
+    elif not secondBestUpdated: # if secondBest is never updated, it means the first set is the best or one of the best
+        signif = Optimum.TRUE
     else:
         abstand = maxU - secondBestU
         if abstand > s:
@@ -300,6 +304,7 @@ def computeUforAllPossibleS_ExactX_case(input, m, k, s):
     secondBestU = 0
     maxSets = set()
     counter = 0
+    secondBestUpdated = False
     for probe_set in findsubsets(set(range(n)), k):
         logging.debug("*****************************************************************")
         logging.debug("possible probeset %s: S=%s", counter, probe_set)
@@ -313,6 +318,7 @@ def computeUforAllPossibleS_ExactX_case(input, m, k, s):
         else:
             if u > maxU:
                 secondBestU = maxU
+                secondBestUpdated = True
                 maxU = u
                 maxSets = set()
                 maxSets.add(probe_set)
@@ -326,6 +332,8 @@ def computeUforAllPossibleS_ExactX_case(input, m, k, s):
         logging.info("%s corresponding prob: %s", bestSet, input[list(bestSet)])
     if len(maxSets) == len(findsubsets(set(range(n)), k)):
         signif = Optimum.ANY
+    elif not secondBestUpdated: # if secondBest is never updated, it means the first set is the best or one of the best
+        signif = Optimum.TRUE
     else:
         abstand = maxU - secondBestU
         if abstand > s:
@@ -344,6 +352,7 @@ def computeUforAllPossibleS_XorY_case(input, x, y, k, s):
     secondBestU = 0
     maxSets = set()
     counter = 0
+    secondBestUpdated = False
     for probe_set in findsubsets(set(range(n)), k):
         counter += 1
         logging.debug("*****************************************************************")
@@ -357,6 +366,7 @@ def computeUforAllPossibleS_XorY_case(input, x, y, k, s):
         else:
             if u > maxU:
                 secondBestU = maxU
+                secondBestUpdated = True
                 maxU = u
                 maxSets = set()
                 maxSets.add(probe_set)
@@ -370,6 +380,8 @@ def computeUforAllPossibleS_XorY_case(input, x, y, k, s):
         logging.info("%s corresponding prob: %s", bestSet, input[list(bestSet)])
     if len(maxSets) == len(findsubsets(set(range(n)), k)):
         signif = Optimum.ANY
+    elif not secondBestUpdated: # if secondBest is never updated, it means the first set is the best or one of the best
+        signif = Optimum.TRUE
     else:
         abstand = maxU - secondBestU
         if abstand > s:
@@ -388,6 +400,7 @@ def computeUforAllPossibleS_XOR_case(input, k, s):
     secondBestU = 0
     maxSets = set()
     counter = 0
+    secondBestUpdated = False
     for probe_set in findsubsets(set(range(n)), k):
         counter += 1
         logging.debug("*****************************************************************")
@@ -401,6 +414,7 @@ def computeUforAllPossibleS_XOR_case(input, k, s):
         else:
             if u > maxU:
                 secondBestU = maxU
+                secondBestUpdated = True
                 maxU = u
                 maxSets = set()
                 maxSets.add(probe_set)
@@ -414,6 +428,8 @@ def computeUforAllPossibleS_XOR_case(input, k, s):
         logging.info("%s corresponding prob: %s", bestSet, input[list(bestSet)])
     if len(maxSets) == len(findsubsets(set(range(n)), k)):
         signif = Optimum.ANY
+    elif not secondBestUpdated: # if secondBest is never updated, it means the first set is the best or one of the best
+        signif = Optimum.TRUE
     else:
         abstand = maxU - secondBestU
         if abstand > s:

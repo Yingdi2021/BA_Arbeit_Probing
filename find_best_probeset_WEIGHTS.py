@@ -6,6 +6,7 @@
 import logging
 import numpy as np
 import itertools
+from optimum import Optimum
 
 
 def findsubsets(set, subset_size):
@@ -79,6 +80,7 @@ def computeUforAllPossibleS_threshold_weights(input, l, k, s):
     secondBestU = 0
     maxSets = set()
     counter = 0
+    secondBestUpdated = False
     for probe_set in findsubsets(set(range(n)), k):
         logging.debug("*****************************************************************\nS = %s", probe_set)
         counter += 1
@@ -91,6 +93,7 @@ def computeUforAllPossibleS_threshold_weights(input, l, k, s):
         else:
             if u > maxU:
                 secondBestU = maxU
+                secondBestUpdated = True
                 maxU = u
                 maxSets = set()
                 maxSets.add(probe_set)
@@ -102,10 +105,17 @@ def computeUforAllPossibleS_threshold_weights(input, l, k, s):
     logging.info("Utility is maximum (%s) when probeset is (one of) the following:", maxU)
     for bestSet in maxSets:
         logging.info("%s corresponding prob: %s", bestSet, input[list(bestSet)])
-    abstand = maxU - secondBestU
-    signif = abstand > s
-    logging.info("secondBestU: %s, diff=%s, significant diff?: %s", round(secondBestU, 4), round(maxU - secondBestU, 4),
-                 signif)
+    if len(maxSets) == len(findsubsets(set(range(n)), k)):
+        signif = Optimum.ANY
+    elif not secondBestUpdated: # if secondBest is never updated, it means the first set is the best or one of the best
+        signif = Optimum.TRUE
+    else:
+        abstand = maxU - secondBestU
+        if abstand > s:
+            signif = Optimum.TRUE
+        else:
+            signif = Optimum.PSEUDO
+    logging.info("secondBestU: %s, diff=%s, is there an optimal?: %s", secondBestU, maxU - secondBestU, signif)
 
     return maxSets, maxU, secondBestU, signif
 
