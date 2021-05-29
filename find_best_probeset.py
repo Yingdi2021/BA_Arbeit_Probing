@@ -41,8 +41,9 @@ def calculateProbCertainNumberOfEventsHappen(ps, m):
 def calculateProbEvenNumberOfEventsHappen(ps):
     n = len(ps)
     result = 0
-    for num in np.arange(0, n, 2):
+    for num in np.arange(0, n+1, 2):
         result += calculateProbCertainNumberOfEventsHappen(ps, num)
+        logging.debug("----p(have %s)=%s", num, calculateProbCertainNumberOfEventsHappen(ps, num))
     return result
 
 ################################################################
@@ -245,6 +246,7 @@ def myUtilityForXORcases(inputData, S):
     # utility += p_probeOdd * max(p_restOdd, 1-p_restOdd)
     p_restEven = calculateProbEvenNumberOfEventsHappen(restData)
     utility += max(p_restEven, 1-p_restEven)
+    logging.debug("p_restEven=%s, p_restOdd=%s", round(p_restEven,3), round((1-p_restEven),3))
     return utility
 
 # given an input (a vector of n probabilities/the groundset), parameters l, k
