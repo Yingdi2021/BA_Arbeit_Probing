@@ -14,7 +14,7 @@ def runAllCombinationsExactOne():
     m = 1
 
     for n in range(5, 9):
-
+        print("-----------------------------")
         true_percentage = []
         any_percentage = []
         startingBit_average = []
@@ -28,6 +28,8 @@ def runAllCombinationsExactOne():
             pseudo_instances = 0  # how many of ... are those, who have a max-probeset but rather shaky...
             startingBits = []
             true_optimal_nums = []
+            startingBit_min = n-1
+            startingBit_max = 0
             while any_instances + true_instances < simulation_num:
                 inputData = sorted(np.random.rand(n))
                 inputData = np.round(inputData, 3)
@@ -41,6 +43,12 @@ def runAllCombinationsExactOne():
                     true_optimal_nums.append(len(maxSets))
                     for maxSet in maxSets:
                         startingBits.append(maxSet[0])
+                        if maxSet[0] > startingBit_max:
+                            startingBit_max = maxSet[0]
+                            if startingBit_max > n-k:
+                                print("?????")
+                        if maxSet[0] < startingBit_min:
+                            startingBit_min = maxSet[0]
                 else:  # pseudo, ignore
                     pseudo_instances += 1
             # look at the result
@@ -69,14 +77,21 @@ def runAllCombinationsExactOne():
             true_percentage.append(true_instances * 100 / simulation_num)
             any_percentage.append(any_instances * 100 / simulation_num)
 
-        print("true_percentage:", true_percentage)
-        print("any_percentage:", any_percentage)
-        print("startingBit_average:", startingBit_average)
-        print("startingBit_std", startingBit_std)
+            # check if all possible starting points have occured in the simulations
+            possibleStartingPoints = np.arange(0, n-k+1)
+            if startingBit_min == 0 and startingBit_max == n-k:
+                print("n=", n, "k=", k, ":oh no... all possible starting points have occured")
+            else:
+                print("n=", n, "k=", k, ": possible starting points are:", possibleStartingPoints)
+                print("we only observed these starting points:", np.arange(startingBit_min,startingBit_max+1))
 
-        f = open("exact_one_n=" + str(n) + ".pkl", 'wb')
-        pickle.dump([true_percentage, any_percentage, startingBit_average], f)
-        f.close()
+        # print("true_percentage:", true_percentage, "any_percentage:", any_percentage)
+        # print("startingBit_average:", startingBit_average, "startingBit_std", startingBit_std)
+
+
+    # f = open("exact_one_n=" + str(n) + ".pkl", 'wb')
+        # pickle.dump([true_percentage, any_percentage, startingBit_average], f)
+        # f.close()
 
     # TODO save the data (for later visualisation purpose)
     # number of true optimal: average, std.
@@ -85,7 +100,8 @@ def runAllCombinationsExactOne():
 def runAllCombinationsNoneOrAll():
     x = 0
 
-    for n in range(5, 9):
+    for n in range(5, 6):
+        print("-----------------------------")
         y = n
 
         true_percentage = []
@@ -95,7 +111,7 @@ def runAllCombinationsNoneOrAll():
         trueOptimalNum_average = []
         trueOptimalNum_std = []
 
-        for k in range(2, n):
+        for k in range(2, 3):
             any_instances = 0 # how many of the ${simulation_num} instances are those who are indifferent to probeset?
             true_instances = 0 # how many of ... are those which we are interested in: exists a real optimum!
             pseudo_instances = 0 # how many of ... are those, who have a max-probeset but rather shaky...
@@ -143,16 +159,24 @@ def runAllCombinationsNoneOrAll():
             true_percentage.append(true_instances*100/simulation_num)
             any_percentage.append(any_instances*100/simulation_num)
 
-        print("true_percentage:", true_percentage)
-        print("any_percentage:", any_percentage)
-        print("startingBit_average:", startingBit_average)
-        print("startingBit_std", startingBit_std)
+            # check if all possible starting points have occured in the simulations
+            possibleStartingPoints = np.arange(0, n-k+1)
+            if len(set(startingBits)) == n:
+                print("n=", n, "k=", k, ":oh no... all possible starting points have occured")
+            else:
+                print("n=", n, "k=", k, ": possible starting points are:", possibleStartingPoints)
+                print("we only observed these starting points:", set(startingBits))
 
-        f = open("none_or_all_n="+str(n)+".pkl", 'wb')
-        pickle.dump([true_percentage, any_percentage, startingBit_average], f)
-        f.close()
+        # logging.error("true_percentage:", true_percentage)
+        # logging.error("any_percentage:", any_percentage)
+        # logging.error("startingBit_average:", startingBit_average)
+        # logging.error("startingBit_std:", startingBit_std)
 
-runAllCombinationsExactOne()
+        # f = open("none_or_all_n="+str(n)+".pkl", 'wb')
+        # pickle.dump([true_percentage, any_percentage, startingBit_average], f)
+        # f.close()
+
+# runAllCombinationsExactOne()
 
 runAllCombinationsNoneOrAll()
 

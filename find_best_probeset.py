@@ -5,12 +5,12 @@ from optimum import Optimum
 
 #################### Helper-functions #########################
 # a frequently used operation
-def multiplyPand1MinusP(input, setP, set1MinusP):
+def multiplyPand1MinusP(inputData, setP, set1MinusP):
     result = 1
     for i in setP:
-        result *= input[i]
+        result *= inputData[i]
     for j in set1MinusP:
-        result *= (1 - input[j])
+        result *= (1 - inputData[j])
     return result
 
 # return all subsets (having a given size)
@@ -51,9 +51,9 @@ def calculateProbEvenNumberOfEventsHappen(ps):
 # calculates the utility (probability of making the right decision)
 # given input data, l(threshold), k(probe-set size) and S(the probe-set)
 # for the normal case, ie. acceptance criteria is: number of 1s >= l.
-def myUtilityForThresholdCases(input, l, k, S):
+def myUtilityForThresholdCases(inputData, l, k, S):
 
-    n = len(input)
+    n = len(inputData)
     N = set(range(n))
     R = N - S
 
@@ -67,7 +67,7 @@ def myUtilityForThresholdCases(input, l, k, S):
             remaining_nulls = S - set(subset)
             #probability that this subset happens. For example:
             # {} means no Eins. {0, 1} means that the first two skills are Eins.
-            p_subset = multiplyPand1MinusP(input, set(subset), remaining_nulls)
+            p_subset = multiplyPand1MinusP(inputData, set(subset), remaining_nulls)
             logging.debug("subset: %s, R=%s, p=%s",set(subset),remaining_nulls, p_subset)
             ps += p_subset
         logging.debug("probability, that there are exactly %s Eins in probe-set is: %s", d,ps)
@@ -84,7 +84,7 @@ def myUtilityForThresholdCases(input, l, k, S):
                 for subset in subsets_for_this_m:
                     remaining_nulls = R - set(subset)
                     #probability that this subset happens:
-                    p_subset = multiplyPand1MinusP(input, set(subset), remaining_nulls)
+                    p_subset = multiplyPand1MinusP(inputData, set(subset), remaining_nulls)
                     c += p_subset
             logging.debug("probability, that at least %s Eins in Rest-Set is:%s", l - d, c)
             logging.debug("choose the more likely! \nWhen there are %s Eins in probe-set: ",d)
@@ -99,14 +99,14 @@ def myUtilityForThresholdCases(input, l, k, S):
 
     logging.debug("-------------\nResult:")
     logging.debug("utiliiy=%s when we select the probe-set: %s", utility, S)
-    return round(utility,10)
+    return round(utility,8)
 
 # calculates the utility (probability of making the right decision)
 # given input data, m (how many 1s EXACTLY), k(probe-set size) and S(the probe-set)
 # for the exactX case, ie. acceptance criteria is: number of 1s == m
-def myUtilityForExactXCases(input, m, k, S):
+def myUtilityForExactXCases(inputData, m, k, S):
 
-    n = len(input)
+    n = len(inputData)
     N = set(range(n))
     R = N - S
 
@@ -120,7 +120,7 @@ def myUtilityForExactXCases(input, m, k, S):
         ps = 0
         for subset in subsets_for_this_d:
             remaining_nulls = S - set(subset)
-            p_subset = multiplyPand1MinusP(input, set(subset), remaining_nulls)
+            p_subset = multiplyPand1MinusP(inputData, set(subset), remaining_nulls)
             logging.debug("subset:%s, R=%s, p=%s ",set(subset), remaining_nulls, p_subset)
             ps += p_subset
         logging.debug("probability, that there are exactly %s Eins in probe-set is:%s",d, ps)
@@ -133,7 +133,7 @@ def myUtilityForExactXCases(input, m, k, S):
             subsets_for_this_m = findsubsets(R, r)
             for subset in subsets_for_this_m:
                 remaining_nulls = R - set(subset)
-                p_subset = multiplyPand1MinusP(input, set(subset), remaining_nulls)
+                p_subset = multiplyPand1MinusP(inputData, set(subset), remaining_nulls)
                 c += p_subset
         logging.debug("probability, that exactly %s Eins in Rest-Set is: %s", r,c)
         logging.debug("choose the more likely! \nWhen there are %s Eins in probe-set: ", d)
@@ -155,7 +155,7 @@ def myUtilityForExactXCases(input, m, k, S):
             ps = 0
             for subset in subsets_for_this_d:
                 remaining_nulls = S - set(subset)
-                p_subset = multiplyPand1MinusP(input, set(subset), remaining_nulls)
+                p_subset = multiplyPand1MinusP(inputData, set(subset), remaining_nulls)
                 logging.debug("subset: %s, R=%s, p=%s ",set(subset), remaining_nulls, p_subset)
                 ps += p_subset
             logging.debug("probability, that there are exactly %s Eins in probe-set AND we make the right decision is:%s",d,ps)
@@ -163,33 +163,33 @@ def myUtilityForExactXCases(input, m, k, S):
 
     logging.debug("-------------\nResult:")
     logging.debug("utiliiy=%s when we select the probe-set: %s", utility, S)
-    return round(utility,10)
+    return round(utility,8)
 
 
 # calculates the utility (probability of making the right decision)
 # given input data, x, y (x OR y 1s exactly), k(probe-set size) and S(the probe-set)
 # for the X or Y case, ie. acceptance criteria is: number of 1s == x || y
-def myUtilityForXorYcases(input, x, y, k, S):
+def myUtilityForXorYcases(inputData, x, y, k, S):
 
     if x == y:
-        return myUtilityForExactXCases(input, x, k, S)
+        return myUtilityForExactXCases(inputData, x, k, S)
 
     # make sure that x, y are in ascending order.
     if x > y:
         x,y = y,x
 
-    n = len(input)
+    n = len(inputData)
     N = set(range(n))
     R = N - S
 
     utility = 0
-    for d in range(y + 1):
+    for d in range(k + 1):
         logging.debug("*********************\nCalculating probability of having excatly %s Eins in the probe-set", d)
         subsets_for_this_d = findsubsets(S, d)
         ps = 0
         for subset in subsets_for_this_d:
             remaining_nulls = S - set(subset)
-            p_subset = multiplyPand1MinusP(input, set(subset), remaining_nulls)
+            p_subset = multiplyPand1MinusP(inputData, set(subset), remaining_nulls)
             logging.debug("subset: %s, R=%s, p=%s", set(subset), remaining_nulls, p_subset)
             ps += p_subset
         logging.debug("probability, that there are exactly %s Eins in probe-set is: %s",  d, ps)
@@ -203,13 +203,13 @@ def myUtilityForXorYcases(input, x, y, k, S):
             subsets_for_this_r = findsubsets(R, r1)
             for subset in subsets_for_this_r:
                 remaining_nulls = R - set(subset)
-                p_subset = multiplyPand1MinusP(input, set(subset),remaining_nulls)
+                p_subset = multiplyPand1MinusP(inputData, set(subset),remaining_nulls)
                 c += p_subset
         if r2 <= n - k and r2 >= 0:
             subsets_for_this_r = findsubsets(R, r2)
             for subset in subsets_for_this_r:
                 remaining_nulls = R - set(subset)
-                p_subset = multiplyPand1MinusP(input, set(subset),remaining_nulls)
+                p_subset = multiplyPand1MinusP(inputData, set(subset),remaining_nulls)
                 c += p_subset
         logging.debug("probability, that exactly %s or %s Eins in Rest-Set is: %s", r1,  r2, c)
         logging.debug("choose the more likely! \nWhen there are %s Eins in probe-set: ", d)
@@ -224,7 +224,70 @@ def myUtilityForXorYcases(input, x, y, k, S):
 
     logging.debug("-------------\nResult:")
     logging.debug("utiliiy=%s when we select the probe-set: %s", utility, S)
-    return round(utility,10)
+    return round(utility,8)
+
+# only for comparison purpose.
+def myUtilityForXorYcasesNew(inputData, x, y, k, S):
+
+    if x == y:
+        return myUtilityForExactXCases(inputData, x, k, S)
+
+    # make sure that x, y are in ascending order.
+    if x > y:
+        x,y = y,x
+
+    n = len(inputData)
+    N = set(range(n))
+    R = N - S
+
+    other_possibility = 1
+    utility = 0
+    for d in (0, k):
+        logging.debug("*********************\nCalculating probability of having excatly %s Eins in the probe-set", d)
+        subsets_for_this_d = findsubsets(S, d)
+        ps = 0
+        for subset in subsets_for_this_d:
+            remaining_nulls = S - set(subset)
+            p_subset = multiplyPand1MinusP(inputData, set(subset), remaining_nulls)
+            logging.debug("subset: %s, R=%s, p=%s", set(subset), remaining_nulls, p_subset)
+            ps += p_subset
+        logging.debug("probability, that there are exactly %s Eins in probe-set is: %s",  d, ps)
+        other_possibility = other_possibility - ps
+
+        r1 = x - d
+        r2 = y - d
+        logging.debug("---------------\nCalculating C (Prob that there are excatly %s or %s 1s in R) for d=%s", r1, r2, d)
+
+        c = 0
+        if r1 == 0 or r1 == (n-k):
+            subsets_for_this_r = findsubsets(R, r1)
+            for subset in subsets_for_this_r:
+                remaining_nulls = R - set(subset)
+                p_subset = multiplyPand1MinusP(inputData, set(subset),remaining_nulls)
+                c += p_subset
+        if r2 == 0 or r2 == (n-k):
+            subsets_for_this_r = findsubsets(R, r2)
+            for subset in subsets_for_this_r:
+                remaining_nulls = R - set(subset)
+                p_subset = multiplyPand1MinusP(inputData, set(subset),remaining_nulls)
+                c += p_subset
+        logging.debug("probability, that exactly %s or %s Eins in Rest-Set is: %s", r1,  r2, c)
+        logging.debug("choose the more likely! \nWhen there are %s Eins in probe-set: ", d)
+        if c >= 0.5:
+            logging.debug("it's more likely (p= %s) that this is a good candidate", c)
+            logging.debug("--> probability, that d= %s AND we make the right decision is %s", d, ps * c)
+            utility += ps * c
+        else:
+            logging.debug("it's more likely (p= %s) that this is a bad candidate", (1 - c))
+            logging.debug("--> probability, that d=%s AND we make the right decision is %s", d, ps * (1 - c))
+            utility += ps * (1 - c)
+
+    utility += other_possibility*1
+    logging.debug("if not 0 or not k, then it's 100% bad candidate. p=%s", other_possibility)
+
+    logging.debug("-------------\nResult:")
+    logging.debug("utiliiy=%s when we select the probe-set: %s", utility, S)
+    return round(utility,8)
 
 # calculates the utility (probability of making the right decision)
 # given input data and S (the probe-set)
@@ -249,12 +312,12 @@ def myUtilityForXORcases(inputData, S):
     logging.debug("p_restEven=%s, p_restOdd=%s", round(p_restEven,3), round((1-p_restEven),3))
     return utility
 
-# given an input (a vector of n probabilities/the groundset), parameters l, k
+# given an inputData (a vector of n probabilities/the groundset), parameters l, k
 # calculate utility for all possible probe-sets (of size k)
 # returns the optimal probe-set(s) and the corresponding utility score.
 # set the last parameter (logOn) to true if you want a detailed output of what happened.
-def computeUforAllPossibleS_threshold_case(input, l, k, s):
-    n = len(input)
+def computeUforAllPossibleS_threshold_case(inputData, l, k, s):
+    n = len(inputData)
     maxU = 0
     secondBestU = 0
     maxSets = set()
@@ -264,7 +327,7 @@ def computeUforAllPossibleS_threshold_case(input, l, k, s):
         logging.debug("*****************************************************************")
         logging.debug("S=%s", probe_set)
         counter += 1
-        u = myUtilityForThresholdCases(input, l, k, set(probe_set))
+        u = myUtilityForThresholdCases(inputData, l, k, set(probe_set))
         if counter == 1:
             secondBestU = u
             maxU = u
@@ -284,7 +347,7 @@ def computeUforAllPossibleS_threshold_case(input, l, k, s):
     logging.info("*****************************************************************")
     logging.info("Utility is maximum (%s) when probeset is (one of) the following:", maxU)
     for bestSet in maxSets:
-        logging.info("%s corresponding prob: %s", bestSet, input[list(bestSet)])
+        logging.info("%s corresponding prob: %s", bestSet, inputData[list(bestSet)])
     if len(maxSets) == len(findsubsets(set(range(n)), k)):
         signif = Optimum.ANY
     elif not secondBestUpdated: # if secondBest is never updated, it means the first set is the best or one of the best
@@ -300,8 +363,8 @@ def computeUforAllPossibleS_threshold_case(input, l, k, s):
 
 # same function as above, but for the exactX case. Duplicated Code, yes. But for the sake of computing speed,
 # I don't want to introduce yet another if condition (which will be repeatedly assessed)
-def computeUforAllPossibleS_ExactX_case(input, m, k, s):
-    n = len(input)
+def computeUforAllPossibleS_ExactX_case(inputData, m, k, s):
+    n = len(inputData)
     maxU = 0
     secondBestU = 0
     maxSets = set()
@@ -311,7 +374,7 @@ def computeUforAllPossibleS_ExactX_case(input, m, k, s):
         logging.debug("*****************************************************************")
         logging.debug("possible probeset %s: S=%s", counter, probe_set)
         counter += 1
-        u = myUtilityForExactXCases(input, m, k, set(probe_set))
+        u = myUtilityForExactXCases(inputData, m, k, set(probe_set))
         if counter == 1:
             secondBestU = u
             maxU = u
@@ -331,7 +394,7 @@ def computeUforAllPossibleS_ExactX_case(input, m, k, s):
     logging.info("*****************************************************************")
     logging.info("Utility is maximum (%s) when probeset is (one of) the following: ", maxU)
     for bestSet in maxSets:
-        logging.info("%s corresponding prob: %s", bestSet, input[list(bestSet)])
+        logging.info("%s corresponding prob: %s", bestSet, inputData[list(bestSet)])
     if len(maxSets) == len(findsubsets(set(range(n)), k)):
         signif = Optimum.ANY
     elif not secondBestUpdated: # if secondBest is never updated, it means the first set is the best or one of the best
@@ -348,8 +411,8 @@ def computeUforAllPossibleS_ExactX_case(input, m, k, s):
 
 # same function as above, but for the X or Y case. Duplicated Code, yes. But for the sake of computing speed,
 # I don't want to introduce yet another if condition (which will be repeatedly assessed)
-def computeUforAllPossibleS_XorY_case(input, x, y, k, s):
-    n = len(input)
+def computeUforAllPossibleS_XorY_case(inputData, x, y, k, s):
+    n = len(inputData)
     maxU = 0
     secondBestU = 0
     maxSets = set()
@@ -359,7 +422,8 @@ def computeUforAllPossibleS_XorY_case(input, x, y, k, s):
         counter += 1
         logging.debug("*****************************************************************")
         logging.debug("possible probeset %s: S=%s", counter, probe_set)
-        u = myUtilityForXorYcases(input, x, y, k, set(probe_set))
+        u = myUtilityForXorYcases(inputData, x, y, k, set(probe_set))
+        # u = myUtilityForXorYcasesNew(inputData, x, y, k, set(probe_set))
         if counter == 1:
             secondBestU = u
             maxU = u
@@ -379,7 +443,7 @@ def computeUforAllPossibleS_XorY_case(input, x, y, k, s):
     logging.info("*****************************************************************")
     logging.info("Utility is maximum (%s) when probeset is (one of) the following: ", maxU)
     for bestSet in maxSets:
-        logging.info("%s corresponding prob: %s", bestSet, input[list(bestSet)])
+        logging.info("%s corresponding prob: %s", bestSet, inputData[list(bestSet)])
     if len(maxSets) == len(findsubsets(set(range(n)), k)):
         signif = Optimum.ANY
     elif not secondBestUpdated: # if secondBest is never updated, it means the first set is the best or one of the best
@@ -396,8 +460,8 @@ def computeUforAllPossibleS_XorY_case(input, x, y, k, s):
 
 # same function as above, but for the XOR case. Duplicated Code, yes. But for the sake of computing speed,
 # I don't want to introduce yet another if condition (which will be repeatedly assessed)
-def computeUforAllPossibleS_XOR_case(input, k, s):
-    n = len(input)
+def computeUforAllPossibleS_XOR_case(inputData, k, s):
+    n = len(inputData)
     maxU = 0
     secondBestU = 0
     maxSets = set()
@@ -407,7 +471,7 @@ def computeUforAllPossibleS_XOR_case(input, k, s):
         counter += 1
         logging.debug("*****************************************************************")
         logging.debug("possible probeset %s: S=%s", counter, probe_set)
-        u = myUtilityForXORcases(input, set(probe_set))
+        u = myUtilityForXORcases(inputData, set(probe_set))
         if counter == 1:
             secondBestU = u
             maxU = u
@@ -427,7 +491,7 @@ def computeUforAllPossibleS_XOR_case(input, k, s):
     logging.info("*****************************************************************")
     logging.info("Utility is maximum (%s) when probeset is (one of) the following: ", maxU)
     for bestSet in maxSets:
-        logging.info("%s corresponding prob: %s", bestSet, input[list(bestSet)])
+        logging.info("%s corresponding prob: %s", bestSet, inputData[list(bestSet)])
     if len(maxSets) == len(findsubsets(set(range(n)), k)):
         signif = Optimum.ANY
     elif not secondBestUpdated: # if secondBest is never updated, it means the first set is the best or one of the best
@@ -445,32 +509,32 @@ def computeUforAllPossibleS_XOR_case(input, k, s):
 ############################# Example #################################
 
 # configure the level of logging here: DEBUG (detailed output), INFO (limited output), ERROR(no output)
-logging.basicConfig(level=logging.ERROR)
+logging.basicConfig(level=logging.DEBUG)
 
 ####### threshold case ########
-# input = np.array( [0.081, 0.745, 0.954, 0.954])
+# inputData = np.array( [0.081, 0.745, 0.954, 0.954])
 # l = 3
 # k = 2
 # sifnificance_level = pow(10, -8)
-# maxSets, maxU, secondBestU, signif= computeUforAllPossibleS_threshold_case(input, l, k, sifnificance_level)
+# maxSets, maxU, secondBestU, signif= computeUforAllPossibleS_threshold_case(inputData, l, k, sifnificance_level)
 
 ####### exactX case ########
-# input = np.array( [0.1, 0.2, 0.5, 0.8])
+# inputData = np.array( [0.1, 0.2, 0.5, 0.8])
 # m = 3
 # k = 2
 # significance_level = pow(10, -8)
-# computeUforAllPossibleS_ExactX_case(input, m, k, significance_level)
+# computeUforAllPossibleS_ExactX_case(inputData, m, k, significance_level)
 
 ####### XorY case ########
-# input = np.array( [0.1, 0.2, 0.5, 0.8])
-# x = 0
-# y = 4
-# k = 3
-# significance_level = pow(10, -8)
-# computeUforAllPossibleS_XorY_case(input, x, y, k, significance_level)
+inputData = np.array([0.1, 0.2, 0.4, 0.8, 0.9])
+x = 0
+y = len(inputData)
+k = 3
+significance_level = pow(10, -8)
+computeUforAllPossibleS_XorY_case(inputData, x, y, k, significance_level)
 
 ####### XOR case ########
-input = np.array( [0.017, 0.102, 0.167, 0.294, 0.328, 0.459, 0.565, 0.881])
-k = 4
-significance_level = pow(10, -8)
-computeUforAllPossibleS_XOR_case(input, k, significance_level)
+# inputData = np.array( [0.017, 0.102, 0.167, 0.294, 0.328, 0.459, 0.565, 0.881])
+# k = 4
+# significance_level = pow(10, -8)
+# computeUforAllPossibleS_XOR_case(inputData, k, significance_level)
