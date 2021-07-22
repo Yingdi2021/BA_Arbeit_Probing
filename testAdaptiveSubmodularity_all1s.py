@@ -8,9 +8,10 @@ logging.basicConfig(level=logging.CRITICAL)
 ALLOWED_ERROR = pow(10, -5)
 
 def calculateConditionalProbability(inputData, partial_realization):
-    if not partial_realization.all():
+    if not partial_realization.all(): # if there's a 0, then we are certain of our decision: 100% correct.
         return 1
-    else:
+    else: # otherwise we campare the probability that all unprobed bits are 1s with its counter-probability and
+        # choose the greater one
         unprobed_bits = inputData[np.isnan(partial_realization)]
         p_all_unprobed_all_ones = np.prod(unprobed_bits)
         return max(p_all_unprobed_all_ones, 1-p_all_unprobed_all_ones)
@@ -32,19 +33,24 @@ def testIfViolatesSubmodularity(inputData, smallerSet, biggerSet, e):
     phi_template = np.empty(n)
     phi_template[:] = np.NAN
     phi_1 = phi_template.copy()
-    phi_2 = phi_template.copy()
     phi_1[list(smallerSet)] = 1
-    phi_2[list(biggerSet)] = 1
-    expectedMarginBenefit_e_for_phi_1 = calculateExpectedMarginBenefit(inputData, phi_1, e)
-    logging.info("expected Margin Benefit of e for phi_1=%s", expectedMarginBenefit_e_for_phi_1)
-    expectedMarginBenefit_e_for_phi_2 = calculateExpectedMarginBenefit(inputData, phi_2, e)
-    logging.info("expected Margin Benefit of e for phi_2=%s", expectedMarginBenefit_e_for_phi_2)
-    if expectedMarginBenefit_e_for_phi_1-expectedMarginBenefit_e_for_phi_2 < -ALLOWED_ERROR:
-        logging.error("--> at least one violation of adaptive submodularity found! phi1=%s, phi2=%s, e=%s", smallerSet,
-                      biggerSet, e)
-        return True # violation detected
-    else:
-        return False # no violation detected
+    restSet = set(biggerSet) - set(smallerSet)
+    m = len(restSet)
+    # consider all possibilities of the restSet!!!!!!
+    possbilities = list(itertools.product([0, 1], repeat=m))
+    for p in possbilities:
+        phi_2 = phi_1.copy()
+        phi_2[list(restSet)] = p
+        expectedMarginBenefit_e_for_phi_1 = calculateExpectedMarginBenefit(inputData, phi_1, e)
+        logging.info("expected Margin Benefit of e for phi_1=%s", round(expectedMarginBenefit_e_for_phi_1,3))
+        expectedMarginBenefit_e_for_phi_2 = calculateExpectedMarginBenefit(inputData, phi_2, e)
+        logging.info("expected Margin Benefit of e for phi_2=%s", round(expectedMarginBenefit_e_for_phi_2,3))
+        if expectedMarginBenefit_e_for_phi_1-expectedMarginBenefit_e_for_phi_2 < -ALLOWED_ERROR:
+            logging.error("--> at least one violation of adaptive submodularity found! phi1=%s, phi2=%s, e=%s", smallerSet,
+                          biggerSet, e)
+            return True # violation detected
+    # if all possibilities are fine (no violation)
+    return False
 
 def findsubsets(set, subset_size):
     return list(itertools.combinations(set, subset_size))
