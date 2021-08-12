@@ -43,7 +43,7 @@ def calculateExpectedMarginBenefit(inputData, partial_realization, e):
     probability_e_being_0 = 1 - inputData[e]
 
     realisation_e_being_1 = partial_realization.copy()
-    realisation_e_being_1[e] = 0
+    realisation_e_being_1[e] = 1
     utility_e_being_1 = calculateConditionalProbability(inputData, realisation_e_being_1)
     probability_e_being_1 = inputData[e]
 
@@ -119,23 +119,21 @@ for combi in combinations:
     if sorted_combi not in combinations_without_repetition:
         combinations_without_repetition.add(sorted_combi)
 
-combinations_without_repetition_sorted = sorted(combinations_without_repetition)
-
+# # for combi in combinations_without_repetition_sorted:
+# #     print(combi)
+#
 # for combi in combinations_without_repetition_sorted:
-#     print(combi)
-
-for combi in combinations_without_repetition_sorted:
-    inputData = np.array(combi)
-    violation = testDistribution(inputData)
-    if not violation:
-        logging.critical("distribution %s satisfies adaptive submodularity", inputData)
+#     inputData = np.array(combi)
+#     violation = testDistribution(inputData)
+#     if not violation:
+#         logging.critical("distribution %s satisfies adaptive submodularity", inputData)
 #
 # ########################################################
 # ######### Test Hypothesis that no distribution is adaptive submodular  ###########
 #
 # ####  test random distributions
-for n in range(3, 4):
-    for simulation_num in range(10):
+for n in range(4, 5):
+    for simulation_num in range(1000):
         x = sorted(np.random.randint(1, 1000, n))
         inputData = np.divide(x, 1000)
         inputData = np.round(inputData, 3) # round input data

@@ -121,9 +121,6 @@ def computeUforAllPossibleS_threshold_weights(input, l, k, s):
 
 
 ############################# Example #################################
-
-logging.basicConfig(level=logging.DEBUG)
-
 input = np.array([0.1, 0.2, 0.3, 0.4])
 weights = np.array([1, 2, 3, 4])
 l = 3

@@ -3,14 +3,17 @@ import logging
 import numpy as np
 import itertools
 
-# logging.basicConfig(level=logging.INFO)
-logging.basicConfig(level=logging.CRITICAL)
+logging.basicConfig(level=logging.INFO)
+# logging.basicConfig(level=logging.CRITICAL)
 ALLOWED_ERROR = pow(10, -5)
 
 
 def calculateConditionalProbability(inputData, partial_realization):
     probed_bits = partial_realization[~np.isnan(partial_realization)]
-    if np.all(probed_bits==1): # if all probed bits are 1s.
+    if len(probed_bits) == 0: # if the probed set is empty
+        p_all_unprobed_ones_or_zeros = np.prod(inputData) + np.prod(1-inputData)
+        return max(p_all_unprobed_ones_or_zeros, 1-p_all_unprobed_ones_or_zeros)
+    elif np.all(probed_bits==1): # if all probed bits are 1s.
         unprobed_bits = inputData[np.isnan(partial_realization)]
         p_all_unprobed_ones = np.prod(unprobed_bits)
         return max(p_all_unprobed_ones, 1-p_all_unprobed_ones)
@@ -32,7 +35,7 @@ def calculateExpectedMarginBenefit(inputData, partial_realization, e):
     probability_e_being_0 = 1 - inputData[e]
 
     realisation_e_being_1 = partial_realization.copy()
-    realisation_e_being_1[e] = 0
+    realisation_e_being_1[e] = 1
     utility_e_being_1 = calculateConditionalProbability(inputData, realisation_e_being_1)
     probability_e_being_1 = inputData[e]
 
@@ -84,7 +87,7 @@ def testDistribution(inputData):
     for size_of_bigger_set in range(2, n):
         for biggerSet in findsubsets(set(range(n)), size_of_bigger_set):
             restSet = set(range(n))-set(biggerSet)
-            for size_smaller_set in range(1,size_of_bigger_set):
+            for size_smaller_set in range(1, size_of_bigger_set):
                 for smallerSet in findsubsets(biggerSet, size_smaller_set):
                     for e in restSet:
                         logging.info("test for combination: phi1=%s, phi2=%s, e=%s", smallerSet, biggerSet, e)
@@ -95,43 +98,43 @@ def testDistribution(inputData):
 
 ########################################################
 #### test individual distribution
-# inputData = np.array([0.2, 0.2, 0.2, 0.2])
-# violation = testDistribution(inputData)
-# print(violation)
+inputData = np.array([0.9, 0.9, 0.9, 0.9])
+violation = testDistribution(inputData)
+print(violation)
 
 ########################################################
 # ## systematically test all possible distributions
-n = 4
-possible_bits = np.round(np.linspace(0.1, 0.9, 9),1)
-# possible_bits = np.round(np.linspace(0.1, 1, 10),1)
-combinations = list(itertools.product(possible_bits, repeat=n))
-combinations_without_repetition = set()
-for combi in combinations:
-    sorted_combi = tuple(sorted(combi))
-    if sorted_combi not in combinations_without_repetition:
-        combinations_without_repetition.add(sorted_combi)
-
-combinations_without_repetition_sorted = sorted(combinations_without_repetition)
-
-# for combi in combinations_without_repetition_sorted:
-#     print(combi)
-anyViolation = False
-for combi in combinations_without_repetition_sorted:
-    inputData = np.array(combi)
-    violation = testDistribution(inputData)
-    if not violation:
-        logging.critical("distribution %s satisfies adaptive submodularity", inputData)
-
-# ####################################
-# ######### Test Hypothesis (that no distributions are adaptive submodular) ###########
+# n = 4
+# possible_bits = np.round(np.linspace(0.1, 0.9, 9),1)
+# # possible_bits = np.round(np.linspace(0.1, 1, 10),1)
+# combinations = list(itertools.product(possible_bits, repeat=n))
+# combinations_without_repetition = set()
+# for combi in combinations:
+#     sorted_combi = tuple(sorted(combi))
+#     if sorted_combi not in combinations_without_repetition:
+#         combinations_without_repetition.add(sorted_combi)
 #
-####  test random distributions
-for n in range(4, 5):
-    for simulation_num in range(100):
-        x = sorted(np.random.randint(1, 1000, n)) # To change
-        inputData = np.divide(x, 1000)
-        inputData = np.round(inputData, 3) # round input data
-
-        violation = testDistribution(inputData)
-        if not violation:
-            logging.critical("this distribution %d is adaptive submodular!. Hypothesis not true!", inputData)
+# combinations_without_repetition_sorted = sorted(combinations_without_repetition)
+#
+# # for combi in combinations_without_repetition_sorted:
+# #     print(combi)
+# anyViolation = False
+# for combi in combinations_without_repetition_sorted:
+#     inputData = np.array(combi)
+#     violation = testDistribution(inputData)
+#     if not violation:
+#         logging.critical("distribution %s satisfies adaptive submodularity", inputData)
+# #
+# # # ####################################
+# # # ######### Test Hypothesis (that no distributions are adaptive submodular) ###########
+# # #
+# # ####  test random distributions
+# for n in range(4, 5):
+#     for simulation_num in range(100):
+#         x = sorted(np.random.randint(1, 1000, n)) # To change
+#         inputData = np.divide(x, 1000)
+#         inputData = np.round(inputData, 3) # round input data
+#
+#         violation = testDistribution(inputData)
+#         if not violation:
+#             logging.critical("this distribution %d is adaptive submodular!. Hypothesis not true!", inputData)

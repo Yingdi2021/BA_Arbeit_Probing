@@ -62,10 +62,10 @@ def findsubsets(set, subset_size):
 
 def testDistribution(inputData):
     n = len(inputData)
-    for size_of_bigger_set in range(2, n):
+    for size_of_bigger_set in range(1, n):
         for biggerSet in findsubsets(set(range(n)), size_of_bigger_set):
             restSet = set(range(n))-set(biggerSet)
-            for size_smaller_set in range(1,size_of_bigger_set):
+            for size_smaller_set in range(size_of_bigger_set):
                 for smallerSet in findsubsets(biggerSet, size_smaller_set):
                     for e in restSet:
                         logging.info("test for combination: phi1=%s, phi2=%s, e=%s", smallerSet, biggerSet, e)
@@ -76,13 +76,13 @@ def testDistribution(inputData):
 
 ########################################################
 ####test individual distribution
-inputData = np.array([0.2, 0.2, 0.2, 0.2])
+inputData = np.array([0.2, 0.5, 0.8, 0.8])
 violation = testDistribution(inputData)
 print(violation)
 
 ########################################################
 # ## systematically test all possible distributions
-n = 6
+n = 4
 possible_bits = np.round(np.linspace(0.1, 0.9, 9),1)
 # possible_bits = np.round(np.linspace(0.1, 1, 10),1)
 combinations = list(itertools.product(possible_bits, repeat=n))
@@ -126,25 +126,25 @@ for combi in combinations_without_repetition_sorted:
 # CRITICAL:root:distribution [0.1 0.1 0.1 0.1 0.1 0.2] satisfies adaptive submodularity, counter prob=[0.9 0.9 0.9 0.9 0.9 0.8]
 
 ########################################################
-######### Test Hypothesis ###########
-
-####  test random distributions
-for n in range(4, 5):
-    for simulation_num in range(1000):
-        x = sorted(np.random.randint(1, 1000, n)) # To change
-        inputData = np.divide(x, 1000)
-        inputData = np.round(inputData, 3) # round input data
-
-        # do we expect a violation for this distribution?
-        violation = testDistribution(inputData)
-        counter_inputData = sorted(1 - inputData)
-        if np.prod(counter_inputData[:-1]) > 0.5:
-            logging.info("utility function for this distribution should be adaptive submodular. no violation expected.")
-            if violation:
-                logging.critical("Violation not expected but occured. Hypothesis not true! %s", inputData)
-
-        if np.prod(counter_inputData[:-1]) < 0.5:
-            logging.info("utility function for this distribution should NOT be adaptive submodular. violation expected.")
-            if not violation:
-                logging.critical("violation expected but did not occur. Hypothesis not true!")
-
+# ######### Test Hypothesis ###########
+#
+# ####  test random distributions
+# for n in range(4, 5):
+#     for simulation_num in range(1000):
+#         x = sorted(np.random.randint(1, 1000, n)) # To change
+#         inputData = np.divide(x, 1000)
+#         inputData = np.round(inputData, 3) # round input data
+#
+#         # do we expect a violation for this distribution?
+#         violation = testDistribution(inputData)
+#         counter_inputData = sorted(1 - inputData)
+#         if np.prod(counter_inputData[:-1]) > 0.5:
+#             logging.info("utility function for this distribution should be adaptive submodular. no violation expected.")
+#             if violation:
+#                 logging.critical("Violation not expected but occured. Hypothesis not true! %s", inputData)
+#
+#         if np.prod(counter_inputData[:-1]) < 0.5:
+#             logging.info("utility function for this distribution should NOT be adaptive submodular. violation expected.")
+#             if not violation:
+#                 logging.critical("violation expected but did not occur. Hypothesis not true!")
+#
