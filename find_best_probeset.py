@@ -187,7 +187,8 @@ def myUtilityForExactXCases(inputData, m, k, S):
     # if there are more than m 1s in probe-set, we always make the right decision: reject
     if k > m:
         for d in range(m+1,k+1):
-            logging.debug("*********************\nCalculating probability of having excatly %s Eins in the probe-set",d)
+            logging.debug("*********************\nif there are %s Eins (>m) in probeset, we always make the right "
+                          "decision: reject",d)
             subsets_for_this_d = findsubsets(S, d)
             logging.debug("there are in total %s subsets: %s for d=%s", len(subsets_for_this_d), subsets_for_this_d, d)
             ps = 0
@@ -200,7 +201,7 @@ def myUtilityForExactXCases(inputData, m, k, S):
             utility += ps
 
     logging.debug("-------------\nResult:")
-    logging.debug("utiliiy=%s when we select the probe-set: %s", utility, S)
+    logging.debug("-------------utiliiy=%s when we select the probe-set: %s -----------", utility, S)
     return round(utility,8)
 
 
