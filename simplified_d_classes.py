@@ -162,18 +162,18 @@ def computeUforAllCombinations_Exact1_case(p1, p2, n1, n2, m, k):
     for bestSet in maxSets:
         logging.info("%s corresponding prob: %s", bestSet, inputData[list(bestSet)])
     if len(maxSets) == len(findAllCombinations(n1,n2, k)):
-        signif = Optimum.ANY
+        optimumType = Optimum.ANY
     elif not secondBestUpdated: # if secondBest is never updated, it means the first set is the best or one of the best
-        signif = Optimum.TRUE
+        optimumType = Optimum.TRUE
     else:
         abstand = maxU - secondBestU
         if abstand > SIGNIFICANCE_LEVEL:
-            signif = Optimum.TRUE
+            optimumType = Optimum.TRUE
         else:
-            signif = Optimum.PSEUDO
-    logging.info("is there an optimal?: %s", signif)
+            optimumType = Optimum.PSEUDO
+    logging.info("is there an optimal?: %s", optimumType)
 
-    return maxSets, maxU, secondBestU, signif
+    return maxSets, maxU, secondBestU, optimumType
 
 #----------------------------------End Main Methods------------------------------------------------
 

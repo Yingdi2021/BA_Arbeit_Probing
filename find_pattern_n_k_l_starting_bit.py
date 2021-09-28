@@ -25,11 +25,11 @@ for n in range(n, n + 1):
                 inputData = sorted(np.random.rand(n))
                 inputData = np.round(inputData, 3)
                 violate = False
-                maxSets, maxU, secondBestU, signif = computeUforAllPossibleS_threshold_case(inputData, l, k,
-                                                                                            sifnificance_level)
-                if signif == Optimum.ANY:
+                maxSets, maxU, secondBestU, optimumType = computeUforAllPossibleS_threshold_case(inputData, l, k,
+                                                                                                 sifnificance_level)
+                if optimumType == Optimum.ANY:
                     any_instances += 1
-                elif signif == Optimum.TRUE:
+                elif optimumType == Optimum.TRUE:
                     true_instances += 1
                 for maxSet in maxSets:
                     startingBits.append(maxSet[0])

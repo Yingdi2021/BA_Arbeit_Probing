@@ -28,14 +28,14 @@ for n in range(4, 10):
                 # x = np.multiply(inputData, 1000)
 
                 # plot the NoneOrAll cases
-                maxSets, maxU, secondBestU, significant = computeUforAllPossibleS_XorY_case(inputData, 0, n, k, sifnificance_level)
+                maxSets, maxU, secondBestU, optimumType = computeUforAllPossibleS_XorY_case(inputData, 0, n, k, sifnificance_level)
                 # plot the exactOne cases
                 # maxSets, maxU, secondBestU, significant = computeUforAllPossibleS_ExactX_case(inputData, 1, k, sifnificance_level)
                 # plot the XOR cases
                 # maxSets, maxU, secondBestU, significant = computeUforAllPossibleS_XOR_case(inputData, k, significance_level)
 
 
-                if significant == Optimum.TRUE:
+                if optimumType == Optimum.TRUE:
                     y = fake_y + counter
                     plt.scatter(x, y, c=colors, marker='o', alpha=0.3, cmap='plasma')
                     for maxSet in maxSets:

@@ -51,8 +51,9 @@ def calculateProbEvenNumberOfEventsHappen(ps):
 # calculates the utility (probability of making the right decision)
 # given input data, l(threshold), k(probe-set size) and S(the probe-set)
 # for the normal case, ie. acceptance criteria is: number of 1s >= l.
-def myUtilityForThresholdCases(inputData, l, k, S):
+def myUtilityForThresholdCases(inputData, l, S):
 
+    k = len(S)
     n = len(inputData)
     N = set(range(n))
     R = N - S
@@ -104,8 +105,9 @@ def myUtilityForThresholdCases(inputData, l, k, S):
 ################################################################
 
 # same function as above, just without loggings
-def myUtilityForThresholdCases_silent(inputData, l, k, S):
+def myUtilityForThresholdCases_silent(inputData, l, S):
 
+    k = len(S)
     n = len(inputData)
     N = set(range(n))
     R = N - S
@@ -142,8 +144,9 @@ def myUtilityForThresholdCases_silent(inputData, l, k, S):
 # calculates the utility (probability of making the right decision)
 # given input data, m (how many 1s EXACTLY), k(probe-set size) and S(the probe-set)
 # for the exactX case, ie. acceptance criteria is: number of 1s == m
-def myUtilityForExactXCases(inputData, m, k, S):
+def myUtilityForExactXCases(inputData, m, S):
 
+    k = len(S)
     n = len(inputData)
     N = set(range(n))
     R = N - S
@@ -208,10 +211,11 @@ def myUtilityForExactXCases(inputData, m, k, S):
 # calculates the utility (probability of making the right decision)
 # given input data, x, y (x OR y 1s exactly), k(probe-set size) and S(the probe-set)
 # for the X or Y case, ie. acceptance criteria is: number of 1s == x || y
-def myUtilityForXorYcases(inputData, x, y, k, S):
+def myUtilityForXorYcases(inputData, x, y, S):
 
+    k = len(S)
     if x == y:
-        return myUtilityForExactXCases(inputData, x, k, S)
+        return myUtilityForExactXCases(inputData, x, S)
 
     # make sure that x, y are in ascending order.
     if x > y:
@@ -266,10 +270,11 @@ def myUtilityForXorYcases(inputData, x, y, k, S):
     return round(utility,8)
 
 # same function as above, but without loggings
-def myUtilityForXorYcases_silent(inputData, x, y, k, S):
+def myUtilityForXorYcases_silent(inputData, x, y, S):
 
+    k = len(S)
     if x == y:
-        return myUtilityForExactXCases(inputData, x, k, S)
+        return myUtilityForExactXCases(inputData, x, S)
 
     # make sure that x, y are in ascending order.
     if x > y:
@@ -312,10 +317,11 @@ def myUtilityForXorYcases_silent(inputData, x, y, k, S):
     return round(utility,8)
 
 # only for comparison purpose.
-def myUtilityForXorYcasesNew(inputData, x, y, k, S):
+def myUtilityForXorYcasesNew(inputData, x, y, S):
 
+    k = len(S)
     if x == y:
-        return myUtilityForExactXCases(inputData, x, k, S)
+        return myUtilityForExactXCases(inputData, x, S)
 
     # make sure that x, y are in ascending order.
     if x > y:
@@ -412,7 +418,7 @@ def computeUforAllPossibleS_threshold_case(inputData, l, k, s):
         logging.debug("*****************************************************************")
         logging.debug("S=%s", probe_set)
         counter += 1
-        u = myUtilityForThresholdCases(inputData, l, k, set(probe_set))
+        u = myUtilityForThresholdCases(inputData, l, set(probe_set))
         if counter == 1:
             secondBestU = u
             maxU = u
@@ -434,17 +440,17 @@ def computeUforAllPossibleS_threshold_case(inputData, l, k, s):
     for bestSet in maxSets:
         logging.info("%s corresponding prob: %s", bestSet, inputData[list(bestSet)])
     if len(maxSets) == len(findsubsets(set(range(n)), k)):
-        signif = Optimum.ANY
+        optimumType = Optimum.ANY
     elif not secondBestUpdated: # if secondBest is never updated, it means the first set is the best or one of the best
-        signif = Optimum.TRUE
+        optimumType = Optimum.TRUE
     else:
         abstand = maxU - secondBestU
         if abstand > s:
-            signif = Optimum.TRUE
+            optimumType = Optimum.TRUE
         else:
-            signif = Optimum.PSEUDO
-    logging.info("secondBestU: %s, diff=%s, is there an optimal?: %s", secondBestU, maxU - secondBestU, signif)
-    return maxSets, maxU, secondBestU, signif
+            optimumType = Optimum.PSEUDO
+    logging.info("secondBestU: %s, diff=%s, is there an optimal?: %s", secondBestU, maxU - secondBestU, optimumType)
+    return maxSets, maxU, secondBestU, optimumType
 
 # same function as above, but for the exactX case. Duplicated Code, yes. But for the sake of computing speed,
 # I don't want to introduce yet another if condition (which will be repeatedly assessed)
@@ -459,7 +465,7 @@ def computeUforAllPossibleS_ExactX_case(inputData, m, k, s):
         logging.debug("*****************************************************************")
         logging.debug("possible probeset %s: S=%s", counter, probe_set)
         counter += 1
-        u = myUtilityForExactXCases(inputData, m, k, set(probe_set))
+        u = myUtilityForExactXCases(inputData, m, set(probe_set))
         if counter == 1:
             secondBestU = u
             maxU = u
@@ -481,18 +487,18 @@ def computeUforAllPossibleS_ExactX_case(inputData, m, k, s):
     for bestSet in maxSets:
         logging.info("%s corresponding prob: %s", bestSet, inputData[list(bestSet)])
     if len(maxSets) == len(findsubsets(set(range(n)), k)):
-        signif = Optimum.ANY
+        optimumType = Optimum.ANY
     elif not secondBestUpdated: # if secondBest is never updated, it means the first set is the best or one of the best
-        signif = Optimum.TRUE
+        optimumType = Optimum.TRUE
     else:
         abstand = maxU - secondBestU
         if abstand > s:
-            signif = Optimum.TRUE
+            optimumType = Optimum.TRUE
         else:
-            signif = Optimum.PSEUDO
-    logging.info("secondBestU: %s, diff=%s, is there an optimal?: %s", secondBestU, maxU - secondBestU, signif)
+            optimumType = Optimum.PSEUDO
+    logging.info("secondBestU: %s, diff=%s, is there an optimal?: %s", secondBestU, maxU - secondBestU, optimumType)
 
-    return maxSets, maxU, secondBestU, signif
+    return maxSets, maxU, secondBestU, optimumType
 
 # same function as above, but for the X or Y case. Duplicated Code, yes. But for the sake of computing speed,
 # I don't want to introduce yet another if condition (which will be repeatedly assessed)
@@ -507,7 +513,7 @@ def computeUforAllPossibleS_XorY_case(inputData, x, y, k, s):
         counter += 1
         logging.debug("*****************************************************************")
         logging.debug("possible probeset %s: S=%s", counter, probe_set)
-        u = myUtilityForXorYcases(inputData, x, y, k, set(probe_set))
+        u = myUtilityForXorYcases(inputData, x, y, set(probe_set))
         # u = myUtilityForXorYcasesNew(inputData, x, y, k, set(probe_set))
         if counter == 1:
             secondBestU = u
@@ -530,18 +536,18 @@ def computeUforAllPossibleS_XorY_case(inputData, x, y, k, s):
     for bestSet in maxSets:
         logging.info("%s corresponding prob: %s", bestSet, inputData[list(bestSet)])
     if len(maxSets) == len(findsubsets(set(range(n)), k)):
-        signif = Optimum.ANY
+        optimumType = Optimum.ANY
     elif not secondBestUpdated: # if secondBest is never updated, it means the first set is the best or one of the best
-        signif = Optimum.TRUE
+        optimumType = Optimum.TRUE
     else:
         abstand = maxU - secondBestU
         if abstand > s:
-            signif = Optimum.TRUE
+            optimumType = Optimum.TRUE
         else:
-            signif = Optimum.PSEUDO
-    logging.info("secondBestU: %s, diff=%s, is there an optimal?: %s", secondBestU, maxU - secondBestU, signif)
+            optimumType = Optimum.PSEUDO
+    logging.info("secondBestU: %s, diff=%s, is there an optimal?: %s", secondBestU, maxU - secondBestU, optimumType)
 
-    return maxSets, maxU, secondBestU, signif
+    return maxSets, maxU, secondBestU, optimumType
 
 # same function as above, but for the XOR case. Duplicated Code, yes. But for the sake of computing speed,
 # I don't want to introduce yet another if condition (which will be repeatedly assessed)
@@ -578,18 +584,18 @@ def computeUforAllPossibleS_XOR_case(inputData, k, s):
     for bestSet in maxSets:
         logging.info("%s corresponding prob: %s", bestSet, inputData[list(bestSet)])
     if len(maxSets) == len(findsubsets(set(range(n)), k)):
-        signif = Optimum.ANY
+        optimumType = Optimum.ANY
     elif not secondBestUpdated: # if secondBest is never updated, it means the first set is the best or one of the best
-        signif = Optimum.TRUE
+        optimumType = Optimum.TRUE
     else:
         abstand = maxU - secondBestU
         if abstand > s:
-            signif = Optimum.TRUE
+            optimumType = Optimum.TRUE
         else:
-            signif = Optimum.PSEUDO
-    logging.info("secondBestU: %s, diff=%s, is there an optimal?: %s", secondBestU, maxU - secondBestU, signif)
+            optimumType = Optimum.PSEUDO
+    logging.info("secondBestU: %s, diff=%s, is there an optimal?: %s", secondBestU, maxU - secondBestU, optimumType)
 
-    return maxSets, maxU, secondBestU, signif
+    return maxSets, maxU, secondBestU, optimumType
 
 ############################# Example #################################
 
@@ -601,7 +607,7 @@ logging.basicConfig(level=logging.DEBUG)
 # l = 3
 # k = 2
 # sifnificance_level = pow(10, -8)
-# maxSets, maxU, secondBestU, signif= computeUforAllPossibleS_threshold_case(inputData, l, k, sifnificance_level)
+# maxSets, maxU, secondBestU, optimumType= computeUforAllPossibleS_threshold_case(inputData, l, k, sifnificance_level)
 
 ####### exactX case ########
 inputData = np.array( [0.1, 0.2, 0.4, 0.8, 0.9])

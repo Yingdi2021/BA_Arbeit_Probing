@@ -10,7 +10,7 @@ class testComputeAllPossibleS(unittest.TestCase):
         y = len(input)
         k = 3
         significance_level = pow(10, -8)
-        maxSets, maxU, secondBestU, signif = computeUforAllPossibleS_XorY_case(input, x, y, k, significance_level)
+        maxSets, maxU, secondBestU, optimumType = computeUforAllPossibleS_XorY_case(input, x, y, k, significance_level)
         self.assertEqual(maxSets, {(0, 1, 2)})
         self.assertEqual(maxU, 1)
 
@@ -21,7 +21,7 @@ class testComputeAllPossibleS(unittest.TestCase):
         y = n
         k = 3
         significance_level = pow(10, -8)
-        maxSets, maxU, secondBestU, signif = computeUforAllPossibleS_XorY_case(input, x, y, k, significance_level)
+        maxSets, maxU, secondBestU, optimumType = computeUforAllPossibleS_XorY_case(input, x, y, k, significance_level)
         # expected outcome: all subsets of size k are optimal
         self.assertEqual(len(maxSets), len(findsubsets(set(range(n)), k)))
         self.assertEqual(round(maxU,6), 0.993745)
@@ -32,7 +32,7 @@ class testComputeAllPossibleS(unittest.TestCase):
         y = len(input)
         k = 6
         significance_level = pow(10, -8)
-        maxSets, maxU, secondBestU, signif = computeUforAllPossibleS_XorY_case(input, x, y, k, significance_level)
+        maxSets, maxU, secondBestU, optimumType = computeUforAllPossibleS_XorY_case(input, x, y, k, significance_level)
         self.assertEqual(maxSets, {(2, 3, 4, 5, 6, 7)})
         self.assertEqual(round(maxU,6), 0.997969)
 
@@ -42,7 +42,7 @@ class testComputeAllPossibleS(unittest.TestCase):
         y = len(input)
         k = 4
         significance_level = pow(10, -8)
-        maxSets, maxU, secondBestU, signif = computeUforAllPossibleS_XorY_case(input, x, y, k, significance_level)
+        maxSets, maxU, secondBestU, optimumType = computeUforAllPossibleS_XorY_case(input, x, y, k, significance_level)
         self.assertEqual(maxSets, {(1,2,3,4)})
         self.assertEqual(round(maxU,6), 0.995861)
 
@@ -52,7 +52,7 @@ class testComputeAllPossibleS(unittest.TestCase):
         m = 1
         k = 3
         significance_level = pow(10, -8)
-        maxSets, maxU, secondBestU, signif = computeUforAllPossibleS_ExactX_case(input, m, k, significance_level)
+        maxSets, maxU, secondBestU, optimumType = computeUforAllPossibleS_ExactX_case(input, m, k, significance_level)
         self.assertEqual(maxSets, {(0,1,2)})
         self.assertEqual(round(maxU,6), 0.857884)
 
@@ -61,7 +61,7 @@ class testComputeAllPossibleS(unittest.TestCase):
         m = 1
         k = 6
         significance_level = pow(10, -8)
-        maxSets, maxU, secondBestU, signif = computeUforAllPossibleS_ExactX_case(input, m, k, significance_level)
+        maxSets, maxU, secondBestU, optimumType = computeUforAllPossibleS_ExactX_case(input, m, k, significance_level)
         self.assertEqual(maxSets, {(0,1,2,3,4,5)})
         self.assertEqual(round(maxU,6), 0.991903)
 
@@ -70,7 +70,7 @@ class testComputeAllPossibleS(unittest.TestCase):
         m = 1
         k = 5
         significance_level = pow(10, -8)
-        maxSets, maxU, secondBestU, signif = computeUforAllPossibleS_ExactX_case(input, m, k, significance_level)
+        maxSets, maxU, secondBestU, optimumType = computeUforAllPossibleS_ExactX_case(input, m, k, significance_level)
         self.assertEqual(maxSets, {(0,1,2,3,4)})
         self.assertEqual(round(maxU,6), 1.0)
 
@@ -80,7 +80,7 @@ class testComputeAllPossibleS(unittest.TestCase):
         m = 1
         k = 2
         significance_level = pow(10, -8)
-        maxSets, maxU, secondBestU, signif = computeUforAllPossibleS_ExactX_case(input, m, k, significance_level)
+        maxSets, maxU, secondBestU, optimumType = computeUforAllPossibleS_ExactX_case(input, m, k, significance_level)
         # expected outcome: all subsets of size k are optimal
         self.assertEqual(len(maxSets), len(findsubsets(set(range(n)), k)))
         self.assertEqual(round(maxU,6), 0.998474)

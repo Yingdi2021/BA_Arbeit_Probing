@@ -33,12 +33,12 @@ def runAllCombinationsExactOne():
             while any_instances + true_instances < simulation_num:
                 inputData = sorted(np.random.rand(n))
                 inputData = np.round(inputData, 3)
-                maxSets, maxU, secondBestU, signif = computeUforAllPossibleS_ExactX_case(inputData, m, k,
+                maxSets, maxU, secondBestU, optimumType = computeUforAllPossibleS_ExactX_case(inputData, m, k,
                                                                                          sifnificance_level)
 
-                if signif == Optimum.ANY:
+                if optimumType == Optimum.ANY:
                     any_instances += 1
-                elif signif == Optimum.TRUE:
+                elif optimumType == Optimum.TRUE:
                     true_instances += 1
                     true_optimal_nums.append(len(maxSets))
                     for maxSet in maxSets:
@@ -120,11 +120,11 @@ def runAllCombinationsNoneOrAll():
             while any_instances+true_instances < simulation_num:
                 inputData = sorted(np.random.rand(n))
                 inputData = np.round(inputData, 3)
-                maxSets, maxU, secondBestU, signif = computeUforAllPossibleS_XorY_case(inputData,x, y, k, sifnificance_level)
+                maxSets, maxU, secondBestU, optimumType = computeUforAllPossibleS_XorY_case(inputData,x, y, k, sifnificance_level)
 
-                if signif == Optimum.ANY:
+                if optimumType == Optimum.ANY:
                     any_instances += 1
-                elif signif == Optimum.TRUE:
+                elif optimumType == Optimum.TRUE:
                     true_instances += 1
                     true_optimal_nums.append(len(maxSets))
                     for maxSet in maxSets:

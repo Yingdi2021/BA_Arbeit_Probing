@@ -106,18 +106,18 @@ def computeUforAllPossibleS_threshold_weights(input, l, k, s):
     for bestSet in maxSets:
         logging.info("%s corresponding prob: %s", bestSet, input[list(bestSet)])
     if len(maxSets) == len(findsubsets(set(range(n)), k)):
-        signif = Optimum.ANY
+        optimumType = Optimum.ANY
     elif not secondBestUpdated: # if secondBest is never updated, it means the first set is the best or one of the best
-        signif = Optimum.TRUE
+        optimumType = Optimum.TRUE
     else:
         abstand = maxU - secondBestU
         if abstand > s:
-            signif = Optimum.TRUE
+            optimumType = Optimum.TRUE
         else:
-            signif = Optimum.PSEUDO
-    logging.info("secondBestU: %s, diff=%s, is there an optimal?: %s", secondBestU, maxU - secondBestU, signif)
+            optimumType = Optimum.PSEUDO
+    logging.info("secondBestU: %s, diff=%s, is there an optimal?: %s", secondBestU, maxU - secondBestU, optimumType)
 
-    return maxSets, maxU, secondBestU, signif
+    return maxSets, maxU, secondBestU, optimumType
 
 
 ############################# Example #################################
