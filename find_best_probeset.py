@@ -104,43 +104,6 @@ def myUtilityForThresholdCases(inputData, l, S):
 
 ################################################################
 
-# same function as above, just without loggings
-def myUtilityForThresholdCases_silent(inputData, l, S):
-
-    k = len(S)
-    n = len(inputData)
-    N = set(range(n))
-    R = N - S
-
-    utility = 0
-    for d in range(k + 1):
-        subsets_for_this_d = findsubsets(S, d)
-        ps = 0
-        for subset in subsets_for_this_d:
-            remaining_nulls = S - set(subset)
-            #probability that this subset happens. For example:
-            # {} means no Eins. {0, 1} means that the first two skills are Eins.
-            p_subset = multiplyPand1MinusP(inputData, set(subset), remaining_nulls)
-            ps += p_subset
-
-        if d >= l:
-            utility += ps
-        else:
-            c = 0
-            for m in range(l-d, n-k+1):
-                subsets_for_this_m = findsubsets(R, m)
-                for subset in subsets_for_this_m:
-                    remaining_nulls = R - set(subset)
-                    #probability that this subset happens:
-                    p_subset = multiplyPand1MinusP(inputData, set(subset), remaining_nulls)
-                    c += p_subset
-            if c>= 0.5:
-                utility += ps*c
-            else:
-                utility += ps*(1-c)
-
-    return round(utility,8)
-
 # calculates the utility (probability of making the right decision)
 # given input data, m (how many 1s EXACTLY), k(probe-set size) and S(the probe-set)
 # for the exactX case, ie. acceptance criteria is: number of 1s == m
