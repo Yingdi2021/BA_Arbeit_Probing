@@ -55,10 +55,10 @@ def myUtilityForWeightedThresholdCases(inputData, weights, l, S):
             p_rest_enough = 1
         if p_rest_enough>=0.5:
             u = p_this_possibility * p_rest_enough
-            logging.debug("prob that rest_set has enough Eins is %s, good candidate, accept.", p_rest_enough)
+            logging.debug("prob that rest_set has enough Eins is %s, good candidate, accept. u=%s", p_rest_enough, u)
         else:
             u = p_this_possibility * (1-p_rest_enough)
-            logging.debug("prob that rest_set has enough Eins is %s, bad candidate, reject", p_rest_enough)
+            logging.debug("prob that rest_set has enough Eins is %s, bad candidate, reject. u=%s", p_rest_enough, u)
         utility += u
 
     logging.debug("-------------\nResult:")
@@ -116,8 +116,11 @@ def computeUforAllPossibleS_WeightedThreshold_case(inputData, weights, l, k):
 logging.basicConfig(level=logging.INFO)
 # logging.basicConfig(level=logging.DEBUG)
 
-inputData = np.array([0.2, 0.5, 0.7, 0.9])
-weights = np.array([2, 1, 3, 0.5])
-threshold = 2
+inputData = np.array([ 0.3,  0.4,  0.6,  0.8,  0.9])
+weights = np.array([ 1.1,  0.3,  2.6,  0.1,  0.9])
+weighted_inputdata = weights * inputData
+print(weighted_inputdata)
+threshold = 4
+k = 2
 
-computeUforAllPossibleS_WeightedThreshold_case(inputData, weights,threshold,3)
+computeUforAllPossibleS_WeightedThreshold_case(inputData, weights,threshold,k)
